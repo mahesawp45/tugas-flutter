@@ -22,6 +22,8 @@ class BMICalculator {
   BMICalculator({required this.height, required this.weight});
   BMICalculator.fromBMIValue({this.bmi});
 
+  get GetHeight => height;
+
   /// Ini dipakai untuk mendapatkan hasil BMI = weigth / height dalam meter2
   double calculate() {
     double heightInMeter = height! / 100;

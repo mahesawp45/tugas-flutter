@@ -15,6 +15,41 @@ TextStyle calculateTextStyle = const TextStyle(
   fontSize: 20,
 );
 
+TextStyle clockTextStyle = const TextStyle(
+  color: Colors.white,
+  fontSize: 20,
+);
+
+TextStyle menuTextStyle = TextStyle(
+  color: secondColor,
+  fontSize: 10,
+  overflow: TextOverflow.ellipsis,
+);
+
+class TitleWidget extends StatelessWidget {
+  final String title;
+
+  const TitleWidget({
+    Key? key,
+    required this.title,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      title,
+      style: clockTextStyle
+          .copyWith(fontSize: 34, fontWeight: FontWeight.bold, shadows: [
+        const Shadow(
+          blurRadius: 15,
+          offset: Offset(0, 0),
+          color: Colors.red,
+        )
+      ]),
+    );
+  }
+}
+
 const String underweightSevere = "Underweight (Severe thinness)";
 const String underweightModerate = "Underweight (Severe Moderate)";
 const String underweightMild = "Underweight (Severe Mild)";

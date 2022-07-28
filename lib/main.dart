@@ -1,3 +1,6 @@
+import 'package:bmi_app/screens/add_eat_alarm.dart';
+import 'package:bmi_app/screens/challenge_screen.dart';
+import 'package:bmi_app/screens/set_eat_time_screen.dart';
 import 'package:flutter/services.dart';
 
 import '/constants/constants.dart';
@@ -29,6 +32,9 @@ class MyApp extends StatelessWidget {
       routes: {
         Routes.bmiDataScreen: (context) => const BMIDataScreen(),
         Routes.bmiResultScreen: (context) => const BMIResultScreen(),
+        Routes.setEatScreen: (context) => const SetEatTimeScreen(),
+        Routes.addEatAlarmScreen: (context) => const AddEatAlarmScreen(),
+        Routes.challangeScreen: (context) => const ChallangeScreen(),
       },
       theme: ThemeData(
         primaryColor: primaryColor,
@@ -39,6 +45,7 @@ class MyApp extends StatelessWidget {
         drawerTheme: DrawerThemeData(
           backgroundColor: primaryColorDarker,
         ),
+        colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.red),
       ),
     );
   }
