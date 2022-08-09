@@ -9,12 +9,14 @@ class GenderWidget extends StatelessWidget {
     required this.iconGender,
     required this.textGender,
     required this.borderColor,
+    required this.iconSize,
   }) : super(key: key);
 
   final GestureTapCallback onTap;
   final IconData iconGender;
   final String textGender;
   final Color borderColor;
+  final double iconSize;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,7 @@ class GenderWidget extends StatelessWidget {
             children: [
               Icon(
                 iconGender,
-                size: 80,
+                size: iconSize,
                 color: Colors.white,
               ),
               Text(

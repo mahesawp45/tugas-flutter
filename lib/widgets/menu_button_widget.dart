@@ -5,25 +5,23 @@ class MenuButton extends StatelessWidget {
   final GestureTapCallback? onTap;
   final IconData icon;
   final String? title;
+  final MaterialStateProperty<Color>? bgColor;
 
   const MenuButton({
     Key? key,
     this.onTap,
     required this.icon,
     this.title,
+    this.bgColor,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var args = ModalRoute.of(context)!.settings.arguments;
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: TextButton(
         style: ButtonStyle(
-          backgroundColor: title == args
-              ? MaterialStateProperty.all(Colors.black)
-              : MaterialStateProperty.all(Colors.transparent),
+          backgroundColor: bgColor,
           shape: MaterialStateProperty.all(
             const RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
@@ -40,7 +38,7 @@ class MenuButton extends StatelessWidget {
             Text(
               title ?? '',
               style: menuTextStyle.copyWith(
-                  color: title == args ? Colors.white : secondColor),
+                  color: title != null ? Colors.white : secondColor),
             )
           ],
         ),

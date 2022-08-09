@@ -4,4 +4,6 @@ class Routes {
   static String challangeScreen = '/challangeScreen';
   static String setEatScreen = '/setEatScreen';
   static String addEatAlarmScreen = '/addEatAlarmScreen';
+
+  static String mainScreen = '/mainScreen';
 }

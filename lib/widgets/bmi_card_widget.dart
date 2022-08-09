@@ -14,7 +14,7 @@ class BMICardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        margin: const EdgeInsets.all(15),
+        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(15),

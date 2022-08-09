@@ -33,7 +33,7 @@ class AritMathicButton extends StatelessWidget {
           child: Icon(
             aritmathicIcon,
             color: iconColor,
-            size: radius / 2,
+            size: radius / 3,
           ),
         ),
       ),
