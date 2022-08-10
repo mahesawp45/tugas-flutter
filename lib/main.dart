@@ -1,5 +1,4 @@
 import 'package:flutter/services.dart';
-
 import '/constants/constants.dart';
 import '/routes/app_pages.dart';
 import 'screens/bmi_result_screen.dart';
@@ -7,7 +6,23 @@ import 'screens/bmi_result_screen.dart';
 import 'screens/bmi_data_screen.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+class ReceivedNotification {
+  ReceivedNotification({
+    required this.id,
+    required this.title,
+    required this.body,
+    required this.payload,
+  });
+
+  final int id;
+  final String? title;
+  final String? body;
+  final String? payload;
+}
+
+String? selectedNotificationPayload;
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -29,10 +44,6 @@ class MyApp extends StatelessWidget {
       routes: {
         Routes.bmiDataScreen: (context) => const BMIDataScreen(),
         Routes.bmiResultScreen: (context) => const BMIResultScreen(),
-        // Routes.setEatScreen: (context) => const SetEatTimeScreen(),
-        // Routes.addEatAlarmScreen: (context) => const AddEatAlarmScreen(),
-        // Routes.challangeScreen: (context) => const ChallangeScreen(),
-        // Routes.mainScreen: (context) => const MainScreen(),
       },
       theme: ThemeData(
         primaryColor: primaryColor,

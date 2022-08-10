@@ -82,7 +82,7 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
             ),
             VerticalDivider(color: secondColor, width: 2),
             Expanded(
-              flex: constraint.maxWidth < 992 ? 4 : 7,
+              flex: constraint.maxWidth < 992 ? 4 : 8,
               child: PageView(
                 physics: const NeverScrollableScrollPhysics(),
                 scrollDirection: Axis.vertical,
@@ -98,7 +98,8 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
                   const ChallangeScreen(
                     title: 'Challange',
                   ),
-                  const SetEatTimeScreen(
+                  SetEatTimeScreen(
+                    constraints: constraint,
                     title: 'Eat Time',
                   ),
                   const AddEatAlarmScreen(
@@ -133,69 +134,83 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
               setState(() {});
             },
           ),
-          SizedBox(height: spacerMenu),
-          MenuButton(
-            bgColor: title == 'Challange'
-                ? MaterialStateProperty.all(Colors.black)
-                : MaterialStateProperty.all(Colors.transparent),
-            icon: Icons.sports_gymnastics,
-            title: 'Challange',
-            onTap: () {
-              index = 1;
-              title = 'Challange';
-              pageController.animateToPage(index,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeInOut);
-              setState(() {});
-            },
-          ),
-          MenuButton(
-            bgColor: title == 'Eat Time'
-                ? MaterialStateProperty.all(Colors.black)
-                : MaterialStateProperty.all(Colors.transparent),
-            icon: Icons.watch_later_outlined,
-            title: 'Eat Time',
-            onTap: () {
-              index = 2;
-              title = 'Eat Time';
-              pageController.animateToPage(index,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeInOut);
-              setState(() {});
-            },
-          ),
-          MenuButton(
-            bgColor: title == 'Set Alarm'
-                ? MaterialStateProperty.all(Colors.black)
-                : MaterialStateProperty.all(Colors.transparent),
-            icon: Icons.food_bank_outlined,
-            title: 'Set Alarm',
-            onTap: () {
-              index = 3;
-              title = 'Set Alarm';
-              pageController.animateToPage(index,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeInOut);
-              setState(() {});
-            },
-          ),
-          MenuButton(
-            icon: Icons.star,
-            title: Args.rateUs,
-            onTap: () {},
-          ),
-          MenuButton(
-            icon: Icons.share,
-            title: Args.shareUs,
-            onTap: () {},
-          ),
-          MenuButton(
-            icon: Icons.settings,
-            title: Args.settings,
-            onTap: () {},
-          ),
-          const Spacer(
-            flex: 5,
+          // SizedBox(height: spacerMenu),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: constraint.maxWidth < 992 ? 10 : 35,
+                  vertical: 20),
+              child: ListView(
+                children: [
+                  MenuButton(
+                    constraints: constraint,
+                    bgColor: title == 'Challange'
+                        ? MaterialStateProperty.all(Colors.red.shade900)
+                        : MaterialStateProperty.all(Colors.transparent),
+                    icon: Icons.sports_gymnastics,
+                    title: 'Challange',
+                    onTap: () {
+                      index = 1;
+                      title = 'Challange';
+                      pageController.animateToPage(index,
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeInOut);
+                      setState(() {});
+                    },
+                  ),
+                  MenuButton(
+                    constraints: constraint,
+                    bgColor: title == 'Eat Time'
+                        ? MaterialStateProperty.all(Colors.red.shade900)
+                        : MaterialStateProperty.all(Colors.transparent),
+                    icon: Icons.food_bank_outlined,
+                    title: 'Eat Time',
+                    onTap: () {
+                      index = 2;
+                      title = 'Eat Time';
+                      pageController.animateToPage(index,
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeInOut);
+                      setState(() {});
+                    },
+                  ),
+                  MenuButton(
+                    constraints: constraint,
+                    bgColor: title == 'Set Alarm'
+                        ? MaterialStateProperty.all(Colors.red.shade900)
+                        : MaterialStateProperty.all(Colors.transparent),
+                    icon: Icons.watch_later_outlined,
+                    title: 'Set Alarm',
+                    onTap: () {
+                      index = 3;
+                      title = 'Set Alarm';
+                      pageController.animateToPage(index,
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeInOut);
+                      setState(() {});
+                    },
+                  ),
+                  MenuButton(
+                    constraints: constraint,
+                    icon: Icons.star,
+                    title: Args.rateUs,
+                    onTap: () {},
+                  ),
+                  MenuButton(
+                    constraints: constraint,
+                    icon: Icons.share,
+                    title: Args.shareUs,
+                    onTap: () {},
+                  ),
+                  MenuButton(
+                    constraints: constraint,
+                    icon: Icons.settings,
+                    title: Args.settings,
+                    onTap: () {},
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -219,7 +234,7 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
                 children: [
                   BMICardWidget(
                     child: GenderWidget(
-                      iconSize: constraint.maxWidth < 992 ? 80 : 60,
+                      iconSize: constraint.maxWidth < 992 ? 80 : 90,
                       borderColor:
                           gender == "male" ? Colors.red : Colors.transparent,
                       onTap: () {
@@ -235,7 +250,7 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
                   ),
                   BMICardWidget(
                     child: GenderWidget(
-                      iconSize: constraint.maxWidth < 992 ? 80 : 60,
+                      iconSize: constraint.maxWidth < 992 ? 80 : 90,
                       borderColor:
                           gender == 'female' ? Colors.red : Colors.transparent,
                       onTap: () {
@@ -254,90 +269,93 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
             ),
             BMICardWidget(
               color: primaryColorDarker,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      AritMathicButton(
-                        aritmathicIcon: Icons.remove,
-                        onTap: () {
-                          if (height > 0) {
-                            setState(() {
-                              height--;
-                            });
-                          }
-                        },
-                        radius: 30,
-                        splashColor: primaryColorDarker,
-                        bgColor: primaryColorLighter,
-                        iconColor: secondColor,
-                      ),
-                      const SizedBox(width: 10),
-                      AritMathicButton(
-                        aritmathicIcon: Icons.add,
-                        onTap: () {
-                          if (height < 250) {
-                            setState(() {
-                              height++;
-                            });
-                          }
-                        },
-                        radius: 30,
-                        splashColor: primaryColorDarker,
-                        bgColor: primaryColorLighter,
-                        iconColor: secondColor,
-                      ),
-                      SizedBox(width: constraint.maxWidth < 992 ? 20 : 10),
-                    ],
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      'HEIGHT',
-                      style: labelTextStyle.copyWith(
-                        fontSize: constraint.maxWidth < 992 ? 20 : 12,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: constraint.maxWidth < 992 ? 12 : 5),
-                  Expanded(
-                    flex: 2,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text(
-                          '${height.toInt()}',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: constraint.maxWidth < 992 ? 50 : 40,
-                          ),
+                        AritMathicButton(
+                          aritmathicIcon: Icons.remove,
+                          onTap: () {
+                            if (height > 0) {
+                              setState(() {
+                                height--;
+                              });
+                            }
+                          },
+                          radius: 30,
+                          splashColor: primaryColorDarker,
+                          bgColor: primaryColorLighter,
+                          iconColor: secondColor,
                         ),
-                        Text(
-                          'cm',
-                          style: TextStyle(color: secondColor),
+                        const SizedBox(width: 10),
+                        AritMathicButton(
+                          aritmathicIcon: Icons.add,
+                          onTap: () {
+                            if (height < 250) {
+                              setState(() {
+                                height++;
+                              });
+                            }
+                          },
+                          radius: 30,
+                          splashColor: primaryColorDarker,
+                          bgColor: primaryColorLighter,
+                          iconColor: secondColor,
                         ),
+                        SizedBox(width: constraint.maxWidth < 992 ? 20 : 10),
                       ],
                     ),
-                  ),
-                  Expanded(
-                    child: Slider(
-                      activeColor: Colors.white,
-                      thumbColor: Colors.red.shade900,
-                      max: 250,
-                      min: 0,
-                      value: height.toDouble(),
-                      onChanged: (value) {
-                        setState(() {
-                          height = value.toInt();
-                        });
-                      },
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        'HEIGHT',
+                        style: labelTextStyle.copyWith(
+                          fontSize: constraint.maxWidth < 992 ? 18 : 12,
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                    SizedBox(height: constraint.maxWidth < 992 ? 5 : 5),
+                    Expanded(
+                      flex: 2,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            '${height.toInt()}',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: constraint.maxWidth < 992 ? 50 : 40,
+                            ),
+                          ),
+                          Text(
+                            'cm',
+                            style: TextStyle(color: secondColor),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Slider(
+                        activeColor: Colors.white,
+                        thumbColor: Colors.red.shade900,
+                        max: 250,
+                        min: 0,
+                        value: height.toDouble(),
+                        onChanged: (value) {
+                          setState(() {
+                            height = value.toInt();
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             Expanded(
@@ -346,10 +364,10 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
                   BMICardWidget(
                     color: primaryColorDarker,
                     child: MeaSurementWidget(
-                      sideSpace: constraint.maxWidth < 992 ? 2 : 7,
+                      sideSpace: constraint.maxWidth < 992 ? 12 : 10,
                       centerSpace: constraint.maxWidth < 992 ? 20 : 5,
-                      sizelabel: constraint.maxWidth < 992 ? 20 : 12,
-                      sizeMeasure: constraint.maxWidth < 992 ? 40 : 30,
+                      sizelabel: constraint.maxWidth < 992 ? 20 : 15,
+                      sizeMeasure: 40,
                       label: 'WEIGHT',
                       measureLabel: 'kg',
                       measure: weight,
@@ -357,7 +375,7 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
                         bgColor: primaryColorLighter,
                         splashColor: primaryColorDarker,
                         iconColor: secondColor,
-                        radius: constraint.maxWidth < 992 ? 50 : 30,
+                        radius: constraint.maxWidth < 992 ? 50 : 60,
                         aritmathicIcon: Icons.remove,
                         onTap: () {
                           if (weight > 0) {
@@ -371,7 +389,7 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
                         bgColor: primaryColorLighter,
                         splashColor: primaryColorDarker,
                         iconColor: secondColor,
-                        radius: constraint.maxWidth < 992 ? 50 : 30,
+                        radius: constraint.maxWidth < 992 ? 50 : 60,
                         aritmathicIcon: Icons.add,
                         onTap: () {
                           setState(() {
@@ -396,21 +414,17 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
                   BMICardWidget(
                     color: primaryColorDarker,
                     child: MeaSurementWidget(
-                      sideSpace: constraint.maxWidth < 992 ? 2 : 7,
+                      sideSpace: constraint.maxWidth < 992 ? 12 : 10,
                       centerSpace: constraint.maxWidth < 992 ? 20 : 5,
-                      sizelabel: constraint.maxWidth < 992 ? 20 : 12,
-                      sizeMeasure: constraint.maxWidth < 992
-                          ? 40
-                          : constraint.maxWidth < 400
-                              ? 10
-                              : 30,
+                      sizelabel: constraint.maxWidth < 992 ? 20 : 15,
+                      sizeMeasure: 40,
                       label: 'AGE',
                       measureLabel: 'y.o',
                       button1: AritMathicButton(
                         bgColor: primaryColorLighter,
                         splashColor: primaryColorDarker,
                         iconColor: secondColor,
-                        radius: constraint.maxWidth < 992 ? 50 : 30,
+                        radius: constraint.maxWidth < 992 ? 50 : 60,
                         aritmathicIcon: Icons.remove,
                         onTap: () {
                           if (age > 0) {
@@ -424,7 +438,7 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
                         bgColor: primaryColorLighter,
                         splashColor: primaryColorDarker,
                         iconColor: secondColor,
-                        radius: constraint.maxWidth < 992 ? 50 : 30,
+                        radius: constraint.maxWidth < 992 ? 50 : 60,
                         aritmathicIcon: Icons.add,
                         onTap: () {
                           setState(() {
@@ -485,9 +499,16 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.red.shade900,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                      color: Colors.red.shade900,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          blurRadius: 20,
+                          color: Colors.red.shade800,
+                          offset: const Offset(0, 2),
+                          spreadRadius: 2,
+                        ),
+                      ]),
                   height: constraint.maxWidth < 992 ? 60 : 45,
                   width: widthTombol,
                   child: Center(

@@ -1,10 +1,29 @@
-import 'package:flutter/cupertino.dart';
-
 class Alarm {
+  int? id;
+  String? title;
   DateTime? alarmDateTime;
-  String? description;
-  bool? isActive;
-  List<Color>? gradients;
+  bool? isPending;
+  int? gradientColorIndex;
 
-  Alarm({this.alarmDateTime, this.description, this.gradients});
+  Alarm(
+      {this.id,
+      this.title,
+      this.alarmDateTime,
+      this.isPending,
+      this.gradientColorIndex});
+
+  factory Alarm.fromMap(Map<String, dynamic> json) => Alarm(
+        id: json["id"],
+        title: json["title"],
+        alarmDateTime: DateTime.parse(json["alarmDateTime"]),
+        isPending: json["isPending"],
+        gradientColorIndex: json["gradientColorIndex"],
+      );
+  Map<String, dynamic> toMap() => {
+        "id": id,
+        "title": title,
+        "alarmDateTime": alarmDateTime!.toIso8601String(),
+        "isPending": isPending,
+        "gradientColorIndex": gradientColorIndex,
+      };
 }

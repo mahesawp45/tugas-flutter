@@ -99,18 +99,18 @@ class ClockPainter extends CustomPainter {
 
     //ini buat katik detik
     var secHandBrush = Paint()
-      ..color = Colors.orange.shade300
+      ..color = Colors.red.shade900
       ..strokeWidth = size.width / 60
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
 
     //ini buat katik menit
     var minHandBrush = Paint()
-      // ..shader = const RadialGradient(colors: [Colors.indigo, Colors.lightBlue])
-      //     .createShader(
-      //   Rect.fromCircle(center: center, radius: radius),
-      // )
-      ..color = Colors.red.shade900
+      ..shader = const RadialGradient(colors: [Colors.purple, Colors.red])
+          .createShader(
+        Rect.fromCircle(center: center, radius: radius),
+      )
+      // ..color = Colors.red.shade900
       ..strokeCap = StrokeCap.round
       ..strokeWidth = size.width / 30
       ..style = PaintingStyle.stroke;

@@ -83,7 +83,19 @@ class BMIResultScreen extends StatelessWidget {
               Navigator.pop(context);
             },
             child: Container(
-              color: Colors.red.shade900,
+              margin: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.red.shade900,
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 20,
+                    color: Colors.red.shade800,
+                    offset: const Offset(0, 2),
+                    spreadRadius: 2,
+                  ),
+                ],
+                borderRadius: BorderRadius.circular(20),
+              ),
               height: 60,
               width: widthTombol,
               child: Center(

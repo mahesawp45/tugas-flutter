@@ -1,4 +1,3 @@
-import 'package:bmi_app/constants/constants.dart';
 import 'package:flutter/material.dart';
 
 class MenuButton extends StatelessWidget {
@@ -6,6 +5,7 @@ class MenuButton extends StatelessWidget {
   final IconData icon;
   final String? title;
   final MaterialStateProperty<Color>? bgColor;
+  final BoxConstraints constraints;
 
   const MenuButton({
     Key? key,
@@ -13,6 +13,7 @@ class MenuButton extends StatelessWidget {
     required this.icon,
     this.title,
     this.bgColor,
+    required this.constraints,
   }) : super(key: key);
 
   @override
@@ -23,24 +24,18 @@ class MenuButton extends StatelessWidget {
         style: ButtonStyle(
           backgroundColor: bgColor,
           shape: MaterialStateProperty.all(
-            const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(20),
-              ),
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
             ),
           ),
         ),
         onPressed: onTap,
-        child: Column(
-          children: [
-            Icon(icon, size: 40, color: Colors.white),
-            const SizedBox(height: 5),
-            Text(
-              title ?? '',
-              style: menuTextStyle.copyWith(
-                  color: title != null ? Colors.white : secondColor),
-            )
-          ],
+        child: Padding(
+          padding: EdgeInsets.all(constraints.maxWidth < 992 ? 4 : 10),
+          child: Center(
+              child: Icon(icon,
+                  size: constraints.maxWidth < 992 ? 30 : 40,
+                  color: Colors.white)),
         ),
       ),
     );
