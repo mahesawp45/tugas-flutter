@@ -1,9 +1,9 @@
-import 'dart:async';
 import 'dart:math';
 
+import 'package:bmi_app/R/r.dart';
+import 'package:bmi_app/providers/clock_provider.dart';
 import 'package:flutter/material.dart';
-
-import 'package:bmi_app/constants/constants.dart';
+import 'package:provider/provider.dart';
 
 class ClockView extends StatefulWidget {
   const ClockView({
@@ -18,22 +18,20 @@ class ClockView extends StatefulWidget {
 }
 
 class _ClockViewState extends State<ClockView> {
+  ClockProvider? clockProvider;
+
   @override
   void initState() {
-    //buat update UI per 1 detik
-    Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {});
-    });
-
+    clockProvider = Provider.of<ClockProvider>(context, listen: false);
+    clockProvider?.upDateClock();
     super.initState();
   }
 
   @override
-  void dispose() {
-    Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {});
-    }).cancel();
-    super.dispose();
+  void didChangeDependencies() {
+    clockProvider = Provider.of<ClockProvider>(context, listen: true);
+    clockProvider?.upDateClock();
+    super.didChangeDependencies();
   }
 
   @override
@@ -86,16 +84,16 @@ class ClockPainter extends CustomPainter {
 
     // .................................................................. BRUSH
     //ini yang dipake gambar jam dalem
-    var fillBrush = Paint()..color = primaryColorLighter;
+    var fillBrush = Paint()..color = R.appColors.primaryColorLighter;
 
     //ini yang dipake gambar bingkai jam
     var outLineBrush = Paint()
-      ..color = secondColor
+      ..color = R.appColors.secondColor
       ..strokeWidth = size.width / 20
       ..style = PaintingStyle.stroke;
 
     //ini buat Titik di tengah
-    var centerDotFillBrush = Paint()..color = secondColor;
+    var centerDotFillBrush = Paint()..color = R.appColors.secondColor;
 
     //ini buat katik detik
     var secHandBrush = Paint()
@@ -127,7 +125,7 @@ class ClockPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     var dashBrush = Paint()
-      ..color = secondColor
+      ..color = R.appColors.secondColor
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;

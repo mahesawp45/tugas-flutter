@@ -1,21 +1,43 @@
-import 'package:bmi_app/constants/constants.dart';
-import 'package:bmi_app/helpers/bmi_calculator.dart';
-import 'package:bmi_app/widgets/bmi_card_widget.dart';
+import 'package:bmi_app/R/r.dart';
+import 'package:bmi_app/providers/bmi_calculator_provider.dart';
+import 'package:bmi_app/providers/bmi_provider.dart';
+import 'package:bmi_app/providers/clock_provider.dart';
+import 'package:bmi_app/widgets/card/bmi_card_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class BMIResultScreen extends StatelessWidget {
+class BMIResultScreen extends StatefulWidget {
   const BMIResultScreen({Key? key}) : super(key: key);
+
+  @override
+  State<BMIResultScreen> createState() => _BMIResultScreenState();
+}
+
+class _BMIResultScreenState extends State<BMIResultScreen> {
+  BMICalculatorProvider? bmiCalculatorProvider;
+  BMIProvider? bmiProvider;
+  double? bmi;
+
+  @override
+  void initState() {
+    bmiCalculatorProvider =
+        Provider.of<BMICalculatorProvider>(context, listen: false);
+    bmiProvider = Provider.of<BMIProvider>(context, listen: false);
+    bmiCalculatorProvider?.determineBMICategory();
+    bmiCalculatorProvider?.getHealthRiskDescription();
+    bmi = bmiCalculatorProvider?.bmi;
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    ClockProvider().dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final widthTombol = MediaQuery.of(context).size.width;
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    double bmi = args['bmi'];
-
-    final BMICalculator bmiCalculator = BMICalculator.fromBMIValue(bmi: bmi);
-    bmiCalculator.determineBMICategory();
-    bmiCalculator.getHealthRiskDescription();
 
     return Scaffold(
       appBar: AppBar(
@@ -39,7 +61,7 @@ class BMIResultScreen extends StatelessWidget {
             ),
           ),
           BMICardWidget(
-            color: primaryColorLighter,
+            color: R.appColors.primaryColorLighter,
             child: SizedBox(
               width: widthTombol,
               child: Padding(
@@ -48,18 +70,21 @@ class BMIResultScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Spacer(flex: 1),
-                    Text(
-                      bmiCalculator.bmiCategory ?? '',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: bmiCalculator.resultColor,
-                        fontSize: 23,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Consumer<BMICalculatorProvider>(
+                        builder: (context, bmiCalcuProvider, child) {
+                      return Text(
+                        bmiCalcuProvider.bmiCategory ?? '',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: bmiCalcuProvider.resultColor,
+                          fontSize: 23,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    }),
                     const Spacer(flex: 1),
                     Text(
-                      bmi.toStringAsFixed(1),
+                      (bmi ?? 0).toStringAsFixed(1),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 100,
@@ -67,11 +92,15 @@ class BMIResultScreen extends StatelessWidget {
                       ),
                     ),
                     const Spacer(flex: 1),
-                    Text(
-                      bmiCalculator.bmiDescription ?? '',
-                      textAlign: TextAlign.center,
-                      style: labelTextStyle.copyWith(fontSize: 20),
-                    ),
+                    Consumer<BMICalculatorProvider>(
+                        builder: (context, bmiCalcuProvider, child) {
+                      return Text(
+                        bmiCalculatorProvider?.bmiDescription ?? '',
+                        textAlign: TextAlign.center,
+                        style: R.appTextStyle.labelTextStyle
+                            .copyWith(fontSize: 20),
+                      );
+                    }),
                     const Spacer(flex: 1),
                   ],
                 ),
@@ -101,7 +130,7 @@ class BMIResultScreen extends StatelessWidget {
               child: Center(
                 child: Text(
                   'RE-CALCULATE',
-                  style: calculateTextStyle,
+                  style: R.appTextStyle.calculateTextStyle,
                 ),
               ),
             ),

@@ -1,8 +1,10 @@
 import 'dart:math';
-import 'package:bmi_app/constants/constants.dart';
+
+import 'package:bmi_app/R/constants/constants.dart';
+import 'package:bmi_app/R/r.dart';
 import 'package:flutter/material.dart';
 
-class BMICalculator {
+class BMICalculatorProvider extends ChangeNotifier {
   int? height;
   int? weight;
   double? bmi;
@@ -19,45 +21,45 @@ class BMICalculator {
     Colors.brown,
   ];
 
-  BMICalculator({required this.height, required this.weight});
-  BMICalculator.fromBMIValue({this.bmi});
-
-  get GetHeight => height;
+  // BMICalculatorProvider({this.height, this.weight});
+  // BMICalculatorProvider.fromBMIValue({this.bmi});
 
   /// Ini dipakai untuk mendapatkan hasil BMI = weigth / height dalam meter2
-  double calculate() {
+  double calculate({int? height, int? weight}) {
     double heightInMeter = height! / 100;
     bmi = weight! / pow(heightInMeter, 2);
+    notifyListeners();
     return bmi!;
   }
 
   String determineBMICategory() {
     if (bmi! < 16.0) {
-      bmiCategory = underweightSevere;
+      bmiCategory = R.appStrings.underweightSevere;
       resultColor = resultColors[0];
     } else if (bmi! < 17.0) {
-      bmiCategory = underweightModerate;
+      bmiCategory = R.appStrings.underweightModerate;
       resultColor = resultColors[1];
     } else if (bmi! < 18.5) {
-      bmiCategory = underweightMild;
+      bmiCategory = R.appStrings.underweightMild;
       resultColor = resultColors[1];
     } else if (bmi! < 25.0) {
-      bmiCategory = normal;
+      bmiCategory = R.appStrings.normal;
       resultColor = resultColors[2];
     } else if (bmi! < 30) {
-      bmiCategory = overweight;
+      bmiCategory = R.appStrings.overweight;
       resultColor = resultColors[3];
     } else if (bmi! < 35) {
-      bmiCategory = obeseI;
+      bmiCategory = R.appStrings.obeseI;
       resultColor = resultColors[4];
     } else if (bmi! < 40) {
-      bmiCategory = obeseII;
+      bmiCategory = R.appStrings.obeseII;
       resultColor = resultColors[4];
     } else if (bmi! >= 40) {
-      bmiCategory = obeseIII;
+      bmiCategory = R.appStrings.obeseIII;
       resultColor = resultColors[5];
     }
 
+    notifyListeners();
     return bmiCategory!;
   }
 
@@ -83,6 +85,7 @@ class BMICalculator {
         break;
     }
 
+    notifyListeners();
     return bmiDescription!;
   }
 }

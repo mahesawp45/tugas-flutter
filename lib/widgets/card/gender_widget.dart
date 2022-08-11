@@ -1,6 +1,5 @@
+import 'package:bmi_app/R/r.dart';
 import 'package:flutter/material.dart';
-
-import '/constants/constants.dart';
 
 class GenderWidget extends StatelessWidget {
   const GenderWidget({
@@ -21,11 +20,11 @@ class GenderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: primaryColorLighter,
+      color: R.appColors.primaryColorLighter,
       borderRadius: BorderRadius.circular(15),
       child: InkWell(
         borderRadius: BorderRadius.circular(15),
-        splashColor: primaryColorDarker,
+        splashColor: R.appColors.primaryColorDarker,
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
@@ -42,7 +41,7 @@ class GenderWidget extends StatelessWidget {
               ),
               Text(
                 textGender,
-                style: labelTextStyle,
+                style: R.appTextStyle.labelTextStyle,
               ),
             ],
           ),

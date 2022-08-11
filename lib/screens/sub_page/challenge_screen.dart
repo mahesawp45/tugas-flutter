@@ -1,8 +1,9 @@
+import 'package:bmi_app/R/r.dart';
+import 'package:bmi_app/providers/clock_provider.dart';
+import 'package:bmi_app/widgets/mini/title_widget.dart';
 import 'package:flutter/material.dart';
 
-import 'package:bmi_app/constants/constants.dart';
-
-class ChallangeScreen extends StatelessWidget {
+class ChallangeScreen extends StatefulWidget {
   const ChallangeScreen({
     Key? key,
     required this.title,
@@ -12,6 +13,17 @@ class ChallangeScreen extends StatelessWidget {
   final String title;
 
   final double? paddingTop;
+
+  @override
+  State<ChallangeScreen> createState() => _ChallangeScreenState();
+}
+
+class _ChallangeScreenState extends State<ChallangeScreen> {
+  @override
+  void dispose() {
+    ClockProvider().dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +36,11 @@ class ChallangeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: paddingTop),
+              SizedBox(height: widget.paddingTop),
               Padding(
                 padding: const EdgeInsets.only(top: 10),
                 child: TitleWidget(
-                  title: title,
+                  title: widget.title,
                 ),
               ),
               Expanded(
@@ -40,7 +52,7 @@ class ChallangeScreen extends StatelessWidget {
                         Icon(
                           Icons.warning_rounded,
                           size: 150,
-                          color: secondColor.withOpacity(0.4),
+                          color: R.appColors.secondColor.withOpacity(0.4),
                         ),
                         const Text(
                           'Page Not Found, sorry..',

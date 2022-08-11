@@ -1,13 +1,14 @@
-import 'dart:async';
-
+import 'package:bmi_app/R/r.dart';
 import 'package:bmi_app/data/data.dart';
 import 'package:bmi_app/data/theme_data.dart';
-import 'package:bmi_app/screens/sub_page/add_eat_alarm.dart';
+import 'package:bmi_app/providers/clock_provider.dart';
+import 'package:bmi_app/widgets/mini/title_widget.dart';
+import 'package:bmi_app/widgets/object/alarm_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'package:bmi_app/constants/constants.dart';
 import 'package:bmi_app/screens/sub_page/clock_view.dart';
+import 'package:provider/provider.dart';
 
 class SetEatTimeScreen extends StatefulWidget {
   final String title;
@@ -24,20 +25,20 @@ class SetEatTimeScreen extends StatefulWidget {
 }
 
 class _SetEatTimeScreenState extends State<SetEatTimeScreen> {
+  ClockProvider? clockProvider;
+
   @override
   void initState() {
-    Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {});
-    });
     super.initState();
+    clockProvider = Provider.of<ClockProvider>(context, listen: false);
+    clockProvider?.upDateClock();
   }
 
   @override
-  void dispose() {
-    Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {});
-    }).cancel();
-    super.dispose();
+  void didChangeDependencies() {
+    clockProvider = Provider.of<ClockProvider>(context, listen: true);
+    clockProvider?.upDateClock();
+    super.didChangeDependencies();
   }
 
   @override
@@ -93,23 +94,27 @@ class _SetEatTimeScreenState extends State<SetEatTimeScreen> {
                   padding: const EdgeInsets.only(left: 10),
                   child: ListView(
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            formattedTime,
-                            style: clockTextStyle.copyWith(fontSize: 64),
-                          ),
-                          Text(
-                            formattedDay,
-                            style: clockTextStyle,
-                          ),
-                        ],
-                      ),
+                      Consumer<ClockProvider>(
+                          builder: (context, clockProvider, child) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              formattedTime,
+                              style: R.appTextStyle.clockTextStyle
+                                  .copyWith(fontSize: 64),
+                            ),
+                            Text(
+                              formattedDay,
+                              style: R.appTextStyle.clockTextStyle,
+                            ),
+                          ],
+                        );
+                      }),
                       const SizedBox(height: 50),
                       Text(
                         'Timezone',
-                        style: clockTextStyle,
+                        style: R.appTextStyle.clockTextStyle,
                       ),
                       const SizedBox(height: 10),
                       Row(
@@ -121,13 +126,15 @@ class _SetEatTimeScreenState extends State<SetEatTimeScreen> {
                           const SizedBox(width: 10),
                           Text(
                             'UTC $offSetSign $timeZone',
-                            style: clockTextStyle.copyWith(fontSize: 14),
+                            style: R.appTextStyle.clockTextStyle
+                                .copyWith(fontSize: 14),
                           ),
                         ],
                       ),
                       const SizedBox(height: 50),
                       Text("Your Upcoming Alarm, let's prepare!",
-                          style: clockTextStyle.copyWith(fontSize: 15)),
+                          style: R.appTextStyle.clockTextStyle
+                              .copyWith(fontSize: 15)),
                       const SizedBox(height: 20),
                       Padding(
                         padding: const EdgeInsets.only(right: 20),
@@ -146,13 +153,16 @@ class _SetEatTimeScreenState extends State<SetEatTimeScreen> {
             ],
           ),
         ),
-        const Expanded(
+        Expanded(
           flex: 3,
           child: Padding(
-            padding: EdgeInsets.only(right: 20, top: 50),
+            padding: const EdgeInsets.only(right: 20, top: 50),
             child: Align(
               alignment: Alignment.topCenter,
-              child: ClockView(sizeClock: 500),
+              child: Consumer<ClockProvider>(
+                  builder: (context, clockProvider, child) {
+                return const ClockView(sizeClock: 500);
+              }),
             ),
           ),
         ),
@@ -175,35 +185,43 @@ class _SetEatTimeScreenState extends State<SetEatTimeScreen> {
             title: widget.title.toString(),
           ),
         ),
+        const SizedBox(height: 30),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.only(left: 20),
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    formattedTime,
-                    style: clockTextStyle.copyWith(fontSize: 64),
-                  ),
-                  Text(
-                    formattedDay,
-                    style: clockTextStyle,
-                  ),
-                ],
-              ),
+              Consumer<ClockProvider>(builder: (context, clockProvider, child) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      formattedTime,
+                      style:
+                          R.appTextStyle.clockTextStyle.copyWith(fontSize: 64),
+                    ),
+                    Text(
+                      formattedDay,
+                      style:
+                          R.appTextStyle.clockTextStyle.copyWith(fontSize: 18),
+                    ),
+                  ],
+                );
+              }),
               const Spacer(),
-              const Padding(
-                padding: EdgeInsets.only(right: 20),
+              Padding(
+                padding: const EdgeInsets.only(right: 20),
                 child: Align(
                   alignment: Alignment.center,
-                  child: ClockView(sizeClock: 250),
+                  child: Consumer<ClockProvider>(
+                      builder: (context, clockProvider, child) {
+                    return const ClockView(sizeClock: 250);
+                  }),
                 ),
               ),
               const Spacer(),
               Text(
                 'Timezone',
-                style: clockTextStyle,
+                style: R.appTextStyle.clockTextStyle,
               ),
               const SizedBox(height: 10),
               Row(
@@ -215,13 +233,13 @@ class _SetEatTimeScreenState extends State<SetEatTimeScreen> {
                   const SizedBox(width: 10),
                   Text(
                     'UTC $offSetSign $timeZone',
-                    style: clockTextStyle.copyWith(fontSize: 14),
+                    style: R.appTextStyle.clockTextStyle.copyWith(fontSize: 14),
                   ),
                 ],
               ),
               const SizedBox(height: 50),
               Text("Your Upcoming Alarm, let's prepare!",
-                  style: clockTextStyle.copyWith(fontSize: 15)),
+                  style: R.appTextStyle.clockTextStyle.copyWith(fontSize: 15)),
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.only(right: 20),

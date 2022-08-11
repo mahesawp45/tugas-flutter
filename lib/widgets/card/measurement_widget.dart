@@ -1,6 +1,5 @@
+import 'package:bmi_app/R/r.dart';
 import 'package:flutter/material.dart';
-
-import 'package:bmi_app/constants/constants.dart';
 
 class MeaSurementWidget extends StatelessWidget {
   final Widget button1;
@@ -39,7 +38,8 @@ class MeaSurementWidget extends StatelessWidget {
             flex: 1,
             child: Text(
               label,
-              style: labelTextStyle.copyWith(fontSize: sizelabel * 0.8),
+              style: R.appTextStyle.labelTextStyle
+                  .copyWith(fontSize: sizelabel * 0.8),
             ),
           ),
           SizedBox(height: centerSpace),
@@ -58,7 +58,7 @@ class MeaSurementWidget extends StatelessWidget {
                 ),
                 Text(
                   measureLabel,
-                  style: labelTextStyle.copyWith(fontSize: 12),
+                  style: R.appTextStyle.labelTextStyle.copyWith(fontSize: 12),
                 ),
               ],
             ),
