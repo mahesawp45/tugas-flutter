@@ -20,15 +20,30 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
-        setState(() {
-          isFirst = !isFirst;
-        });
+        isFirst = !isFirst;
+        setState(() {});
       },
     );
     Timer(const Duration(seconds: 5), () {
       Navigator.pushReplacementNamed(context, Routes.bmiDataScreen);
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    Timer.periodic(
+      const Duration(seconds: 1),
+      (timer) {
+        setState(() {
+          isFirst = !isFirst;
+        });
+      },
+    ).cancel();
+    Timer(const Duration(seconds: 5), () {
+      Navigator.pushReplacementNamed(context, Routes.bmiDataScreen);
+    }).cancel();
+    super.dispose();
   }
 
   @override
@@ -48,34 +63,32 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
       ),
       body: Center(
-        child: Expanded(
-          child: SizedBox(
-            height: 500,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AnimatedAlign(
-                  curve: Curves.easeIn,
-                  heightFactor: 2,
-                  widthFactor: 15,
-                  alignment:
-                      isFirst ? Alignment.centerLeft : Alignment.centerRight,
-                  duration: const Duration(milliseconds: 500),
-                  child: const MainMenuButton(size: 20),
-                ),
-                const TitleWidget(title: 'BMI CALCULATOR', fontSize: 20),
-                AnimatedAlign(
-                  curve: Curves.easeIn,
-                  heightFactor: 2,
-                  widthFactor: 15,
-                  alignment:
-                      isFirst ? Alignment.centerRight : Alignment.centerLeft,
-                  duration: const Duration(milliseconds: 500),
-                  child: const MainMenuButton(size: 20),
-                ),
-              ],
-            ),
+        child: SizedBox(
+          height: 500,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedAlign(
+                curve: Curves.easeIn,
+                heightFactor: 2,
+                widthFactor: 15,
+                alignment:
+                    isFirst ? Alignment.centerLeft : Alignment.centerRight,
+                duration: const Duration(milliseconds: 500),
+                child: const MainMenuButton(size: 20),
+              ),
+              const TitleWidget(title: 'BMI CALCULATOR', fontSize: 20),
+              AnimatedAlign(
+                curve: Curves.easeIn,
+                heightFactor: 2,
+                widthFactor: 15,
+                alignment:
+                    isFirst ? Alignment.centerRight : Alignment.centerLeft,
+                duration: const Duration(milliseconds: 500),
+                child: const MainMenuButton(size: 20),
+              ),
+            ],
           ),
         ),
       ),

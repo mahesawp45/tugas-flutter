@@ -126,431 +126,422 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
     );
   }
 
-  Container _buildSideMenu(double paddingTop, double spacerMenu,
+  Widget _buildSideMenu(double paddingTop, double spacerMenu,
       BuildContext context, BoxConstraints constraint,
       {required PageController pageController, required int index}) {
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(height: paddingTop + (constraint.maxWidth < 992 ? 10 : 20)),
-          GestureDetector(
-            child: const MainMenuButton(),
-            onTap: () {
-              index = 0;
-              title = 'BMI Calculator';
-              pageController.animateToPage(index,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeInOut);
-              setState(() {});
-            },
-          ),
-          // SizedBox(height: spacerMenu),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: constraint.maxWidth < 992 ? 10 : 35,
-                  vertical: 20),
-              child: ListView(
-                children: [
-                  MenuButton(
-                    constraints: constraint,
-                    bgColor: title == 'Challange'
-                        ? MaterialStateProperty.all(Colors.red.shade900)
-                        : MaterialStateProperty.all(Colors.transparent),
-                    icon: Icons.sports_gymnastics,
-                    title: 'Challange',
-                    onTap: () {
-                      index = 1;
-                      title = 'Challange';
-                      pageController.animateToPage(index,
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.easeInOut);
-                      setState(() {});
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(height: paddingTop + (constraint.maxWidth < 992 ? 10 : 20)),
+        GestureDetector(
+          child: const MainMenuButton(),
+          onTap: () {
+            index = 0;
+            title = 'BMI Calculator';
+            pageController.animateToPage(index,
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeInOut);
+            setState(() {});
+          },
+        ),
+        // SizedBox(height: spacerMenu),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: constraint.maxWidth < 992 ? 10 : 35, vertical: 20),
+            child: ListView(
+              children: [
+                MenuButton(
+                  constraints: constraint,
+                  bgColor: title == 'Challange'
+                      ? MaterialStateProperty.all(Colors.red.shade900)
+                      : MaterialStateProperty.all(Colors.transparent),
+                  icon: Icons.sports_gymnastics,
+                  title: 'Challange',
+                  onTap: () {
+                    index = 1;
+                    title = 'Challange';
+                    pageController.animateToPage(index,
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut);
+                    setState(() {});
+                  },
+                ),
+                MenuButton(
+                  constraints: constraint,
+                  bgColor: title == 'Eat Time'
+                      ? MaterialStateProperty.all(Colors.red.shade900)
+                      : MaterialStateProperty.all(Colors.transparent),
+                  icon: Icons.food_bank_outlined,
+                  title: 'Eat Time',
+                  onTap: () {
+                    index = 2;
+                    title = 'Eat Time';
+                    pageController.animateToPage(index,
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut);
+                    setState(() {});
+                  },
+                ),
+                MenuButton(
+                  constraints: constraint,
+                  bgColor: title == 'Set Alarm'
+                      ? MaterialStateProperty.all(Colors.red.shade900)
+                      : MaterialStateProperty.all(Colors.transparent),
+                  icon: Icons.watch_later_outlined,
+                  title: 'Set Alarm',
+                  onTap: () {
+                    index = 3;
+                    title = 'Set Alarm';
+                    pageController.animateToPage(index,
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut);
+                    setState(() {});
+                  },
+                ),
+                MenuButton(
+                  constraints: constraint,
+                  bgColor: title == 'Review Us'
+                      ? MaterialStateProperty.all(Colors.red.shade900)
+                      : MaterialStateProperty.all(Colors.transparent),
+                  icon: Icons.star,
+                  title: 'Review Us',
+                  onTap: () {
+                    index = 4;
+                    title = 'Review Us';
+                    pageController.animateToPage(index,
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut);
+                    setState(() {});
+                  },
+                ),
+                MenuButton(
+                  constraints: constraint,
+                  icon: Icons.share,
+                  title: '',
+                  onTap: () async {
+                    await share();
+                  },
+                ),
+                Consumer<DarkThemeProvider>(builder: (context, dark, child) {
+                  return CupertinoSwitch(
+                    activeColor: Colors.white,
+                    trackColor: Colors.white,
+                    thumbColor: Colors.red,
+                    value: dark.darkTheme,
+                    onChanged: (value) {
+                      dark.darkTheme = value;
+                      DarkThemePreference().setDarkTheme(value);
                     },
-                  ),
-                  MenuButton(
-                    constraints: constraint,
-                    bgColor: title == 'Eat Time'
-                        ? MaterialStateProperty.all(Colors.red.shade900)
-                        : MaterialStateProperty.all(Colors.transparent),
-                    icon: Icons.food_bank_outlined,
-                    title: 'Eat Time',
-                    onTap: () {
-                      index = 2;
-                      title = 'Eat Time';
-                      pageController.animateToPage(index,
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.easeInOut);
-                      setState(() {});
-                    },
-                  ),
-                  MenuButton(
-                    constraints: constraint,
-                    bgColor: title == 'Set Alarm'
-                        ? MaterialStateProperty.all(Colors.red.shade900)
-                        : MaterialStateProperty.all(Colors.transparent),
-                    icon: Icons.watch_later_outlined,
-                    title: 'Set Alarm',
-                    onTap: () {
-                      index = 3;
-                      title = 'Set Alarm';
-                      pageController.animateToPage(index,
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.easeInOut);
-                      setState(() {});
-                    },
-                  ),
-                  MenuButton(
-                    constraints: constraint,
-                    bgColor: title == 'Review Us'
-                        ? MaterialStateProperty.all(Colors.red.shade900)
-                        : MaterialStateProperty.all(Colors.transparent),
-                    icon: Icons.star,
-                    title: 'Review Us',
-                    onTap: () {
-                      index = 4;
-                      title = 'Review Us';
-                      pageController.animateToPage(index,
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.easeInOut);
-                      setState(() {});
-                    },
-                  ),
-                  MenuButton(
-                    constraints: constraint,
-                    icon: Icons.share,
-                    title: '',
-                    onTap: () async {
-                      await share();
-                    },
-                  ),
-                  Consumer<DarkThemeProvider>(builder: (context, dark, child) {
-                    return CupertinoSwitch(
-                      activeColor: Colors.white,
-                      trackColor: Colors.white,
-                      thumbColor: Colors.red,
-                      value: dark.darkTheme,
-                      onChanged: (value) {
-                        dark.darkTheme = value;
-                        DarkThemePreference().setDarkTheme(value);
-                      },
-                    );
-                  }),
-                ],
-              ),
+                  );
+                }),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   _buildHomeScreen(double paddingTop, BoxConstraints constraint,
       BuildContext context, double widthTombol) {
-    return Expanded(
-      child: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: paddingTop),
-            const Padding(
-              padding: EdgeInsets.only(left: 15, top: 10),
-              child: TitleWidget(title: 'BMI Calculator'),
-            ),
-            Expanded(
-              child: Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: paddingTop),
+        const Padding(
+          padding: EdgeInsets.only(left: 15, top: 10),
+          child: TitleWidget(title: 'BMI Calculator'),
+        ),
+        Expanded(
+          child: Row(
+            children: [
+              Consumer<BMIProvider>(builder: (context, bmiProvider, child) {
+                return BMICardWidget(
+                  child: GenderWidget(
+                    iconSize: constraint.maxWidth < 992 ? 80 : 90,
+                    borderColor: bmiProvider.gender == "male"
+                        ? Colors.red
+                        : Colors.transparent,
+                    onTap: () {
+                      bmiProvider.gender = 'male';
+                      bmiProvider.setIsMale(true);
+                      bmiProvider.setIsFemale(false);
+                    },
+                    textGender: 'Male',
+                    iconGender: Icons.male,
+                  ),
+                );
+              }),
+              Consumer<BMIProvider>(builder: (context, bmiProvider, child) {
+                return BMICardWidget(
+                  child: GenderWidget(
+                    iconSize: constraint.maxWidth < 992 ? 80 : 90,
+                    borderColor: bmiProvider.gender == 'female'
+                        ? Colors.red
+                        : Colors.transparent,
+                    onTap: () {
+                      bmiProvider.gender = 'female';
+                      bmiProvider.setIsFemale(true);
+                      bmiProvider.setIsMale(false);
+                    },
+                    textGender: 'Female',
+                    iconGender: Icons.female,
+                  ),
+                );
+              }),
+            ],
+          ),
+        ),
+        Consumer<BMIProvider>(builder: (context, bmiProvider, child) {
+          return BMICardWidget(
+            color: R.appColors.primaryColorDarker,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Consumer<BMIProvider>(builder: (context, bmiProvider, child) {
-                    return BMICardWidget(
-                      child: GenderWidget(
-                        iconSize: constraint.maxWidth < 992 ? 80 : 90,
-                        borderColor: bmiProvider.gender == "male"
-                            ? Colors.red
-                            : Colors.transparent,
-                        onTap: () {
-                          bmiProvider.gender = 'male';
-                          bmiProvider.setIsMale(true);
-                          bmiProvider.setIsFemale(false);
-                        },
-                        textGender: 'Male',
-                        iconGender: Icons.male,
-                      ),
-                    );
-                  }),
-                  Consumer<BMIProvider>(builder: (context, bmiProvider, child) {
-                    return BMICardWidget(
-                      child: GenderWidget(
-                        iconSize: constraint.maxWidth < 992 ? 80 : 90,
-                        borderColor: bmiProvider.gender == 'female'
-                            ? Colors.red
-                            : Colors.transparent,
-                        onTap: () {
-                          bmiProvider.gender = 'female';
-                          bmiProvider.setIsFemale(true);
-                          bmiProvider.setIsMale(false);
-                        },
-                        textGender: 'Female',
-                        iconGender: Icons.female,
-                      ),
-                    );
-                  }),
-                ],
-              ),
-            ),
-            Consumer<BMIProvider>(builder: (context, bmiProvider, child) {
-              return BMICardWidget(
-                color: R.appColors.primaryColorDarker,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          AritMathicButton(
-                            aritmathicIcon: Icons.remove,
-                            onTap: () {
-                              if (bmiProvider.getHeightBMI > 0) {
-                                bmiProvider.setDecrementHeight(height!);
-                              }
-                            },
-                            radius: 30,
-                            splashColor: R.appColors.primaryColorDarker,
-                            bgColor: R.appColors.primaryColorLighter,
-                            iconColor: R.appColors.secondColor,
-                          ),
-                          const SizedBox(width: 10),
-                          AritMathicButton(
-                            aritmathicIcon: Icons.add,
-                            onTap: () {
-                              if (bmiProvider.getHeightBMI < 250) {
-                                bmiProvider.setIncrementHeight(height!);
-                              }
-                            },
-                            radius: 30,
-                            splashColor: R.appColors.primaryColorDarker,
-                            bgColor: R.appColors.primaryColorLighter,
-                            iconColor: R.appColors.secondColor,
-                          ),
-                          SizedBox(width: constraint.maxWidth < 992 ? 20 : 10),
-                        ],
+                      AritMathicButton(
+                        aritmathicIcon: Icons.remove,
+                        onTap: () {
+                          if (bmiProvider.getHeightBMI > 0) {
+                            bmiProvider.setDecrementHeight(height!);
+                          }
+                        },
+                        radius: 30,
+                        splashColor: R.appColors.primaryColorDarker,
+                        bgColor: R.appColors.primaryColorLighter,
+                        iconColor: R.appColors.secondColor,
                       ),
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          'HEIGHT',
-                          style: R.appTextStyle.labelTextStyle.copyWith(
-                            fontSize: constraint.maxWidth < 992 ? 18 : 12,
-                          ),
-                        ),
+                      const SizedBox(width: 10),
+                      AritMathicButton(
+                        aritmathicIcon: Icons.add,
+                        onTap: () {
+                          if (bmiProvider.getHeightBMI < 250) {
+                            bmiProvider.setIncrementHeight(height!);
+                          }
+                        },
+                        radius: 30,
+                        splashColor: R.appColors.primaryColorDarker,
+                        bgColor: R.appColors.primaryColorLighter,
+                        iconColor: R.appColors.secondColor,
                       ),
-                      SizedBox(height: constraint.maxWidth < 992 ? 5 : 5),
-                      Expanded(
-                        flex: 2,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              '${bmiProvider.getHeightBMI}',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: constraint.maxWidth < 992 ? 50 : 40,
-                              ),
-                            ),
-                            Text(
-                              'cm',
-                              style: TextStyle(color: R.appColors.secondColor),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Slider(
-                          activeColor: Colors.white,
-                          thumbColor: Colors.red.shade900,
-                          max: 250,
-                          min: 0,
-                          value: bmiProvider.getHeightBMI.toDouble(),
-                          onChanged: (value) {
-                            bmiProvider.setSlideHeight(value.toInt());
-                          },
-                        ),
-                      ),
+                      SizedBox(width: constraint.maxWidth < 992 ? 20 : 10),
                     ],
                   ),
-                ),
-              );
-            }),
-            Expanded(
-              child: Row(
-                children: [
-                  Consumer<BMIProvider>(builder: (context, bmiProvider, child) {
-                    return BMICardWidget(
-                      color: R.appColors.primaryColorDarker,
-                      child: MeaSurementWidget(
-                        sideSpace: constraint.maxWidth < 992 ? 12 : 10,
-                        centerSpace: constraint.maxWidth < 992 ? 20 : 5,
-                        sizelabel: constraint.maxWidth < 992 ? 20 : 15,
-                        sizeMeasure: 40,
-                        label: 'WEIGHT',
-                        measureLabel: 'kg',
-                        measure: bmiProvider.getWeightBMI,
-                        button1: AritMathicButton(
-                          bgColor: R.appColors.primaryColorLighter,
-                          splashColor: R.appColors.primaryColorDarker,
-                          iconColor: R.appColors.secondColor,
-                          radius: constraint.maxWidth < 992 ? 50 : 60,
-                          aritmathicIcon: Icons.remove,
-                          onTap: () {
-                            if (bmiProvider.getWeightBMI > 0) {
-                              bmiProvider.setDecrementWeight(weight!);
-                            }
-                          },
-                        ),
-                        button2: AritMathicButton(
-                          bgColor: R.appColors.primaryColorLighter,
-                          splashColor: R.appColors.primaryColorDarker,
-                          iconColor: R.appColors.secondColor,
-                          radius: constraint.maxWidth < 992 ? 50 : 60,
-                          aritmathicIcon: Icons.add,
-                          onTap: () {
-                            if (bmiProvider.getWeightBMI < 150) {
-                              bmiProvider.setIncrementWeight(weight!);
-                            }
-                          },
-                        ),
-                        slider: Slider(
-                          activeColor: Colors.white,
-                          thumbColor: Colors.red.shade900,
-                          max: 150,
-                          min: 0,
-                          value: bmiProvider.getWeightBMI.toDouble(),
-                          onChanged: (value) {
-                            bmiProvider.setSlideWeight(value.toInt());
-                          },
-                        ),
-                      ),
-                    );
-                  }),
-                  Consumer<BMIProvider>(builder: (context, bmiProvider, child) {
-                    return BMICardWidget(
-                      color: R.appColors.primaryColorDarker,
-                      child: MeaSurementWidget(
-                        sideSpace: constraint.maxWidth < 992 ? 12 : 10,
-                        centerSpace: constraint.maxWidth < 992 ? 20 : 5,
-                        sizelabel: constraint.maxWidth < 992 ? 20 : 15,
-                        sizeMeasure: 40,
-                        label: 'AGE',
-                        measureLabel: 'y.o',
-                        button1: AritMathicButton(
-                          bgColor: R.appColors.primaryColorLighter,
-                          splashColor: R.appColors.primaryColorDarker,
-                          iconColor: R.appColors.secondColor,
-                          radius: constraint.maxWidth < 992 ? 50 : 60,
-                          aritmathicIcon: Icons.remove,
-                          onTap: () {
-                            if (bmiProvider.getAgeBMI > 0) {
-                              bmiProvider.setIncrementAge(age!);
-                            }
-                          },
-                        ),
-                        button2: AritMathicButton(
-                          bgColor: R.appColors.primaryColorLighter,
-                          splashColor: R.appColors.primaryColorDarker,
-                          iconColor: R.appColors.secondColor,
-                          radius: constraint.maxWidth < 992 ? 50 : 60,
-                          aritmathicIcon: Icons.add,
-                          onTap: () {
-                            if (bmiProvider.getAgeBMI < 150) {
-                              bmiProvider.setIncrementAge(age!);
-                            }
-                          },
-                        ),
-                        measure: bmiProvider.getAgeBMI,
-                        slider: Slider(
-                          activeColor: Colors.white,
-                          thumbColor: Colors.red.shade900,
-                          max: 150,
-                          min: 0,
-                          value: bmiProvider.getAgeBMI.toDouble(),
-                          onChanged: (value) {
-                            bmiProvider.setSlideAge(value.toInt());
-                          },
-                        ),
-                      ),
-                    );
-                  }),
-                ],
-              ),
-            ),
-            Consumer<BMIProvider>(builder: (context, bmiProvider, child) {
-              return Padding(
-                padding: const EdgeInsets.all(10),
-                child: GestureDetector(
-                  onTap: () {
-                    final BMICalculatorProvider bmiCalculatorProvider =
-                        Provider.of<BMICalculatorProvider>(context,
-                            listen: false);
-
-                    if (bmiProvider.gender != null) {
-                      // bmiCalculator.calculate();
-                      bmiCalculatorProvider.calculate(
-                          height: bmiProvider.getHeightBMI,
-                          weight: bmiProvider.getWeightBMI);
-                      Navigator.pushNamed(
-                        context,
-                        Routes.loadingScreen,
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: const Text(
-                            'Please select one of the gender, and try again!',
-                            maxLines: 2,
-                          ),
-                          behavior: SnackBarBehavior.floating,
-                          duration: const Duration(seconds: 2),
-                          dismissDirection: DismissDirection.horizontal,
-                          margin: EdgeInsets.symmetric(
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.08,
-                              horizontal: 10),
-                        ),
-                      );
-                    }
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.red.shade900,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 20,
-                            color: Colors.red.shade800,
-                            offset: const Offset(0, 2),
-                            spreadRadius: 2,
-                          ),
-                        ]),
-                    height: constraint.maxWidth < 992 ? 60 : 45,
-                    width: widthTombol,
-                    child: Center(
-                      child: Text(
-                        'Calculate Your BMI',
-                        style: R.appTextStyle.calculateTextStyle,
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                      'HEIGHT',
+                      style: R.appTextStyle.labelTextStyle.copyWith(
+                        fontSize: constraint.maxWidth < 992 ? 18 : 12,
                       ),
                     ),
                   ),
-                ),
-              );
-            }),
-          ],
+                  SizedBox(height: constraint.maxWidth < 992 ? 5 : 5),
+                  Expanded(
+                    flex: 2,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          '${bmiProvider.getHeightBMI}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: constraint.maxWidth < 992 ? 50 : 40,
+                          ),
+                        ),
+                        Text(
+                          'cm',
+                          style: TextStyle(color: R.appColors.secondColor),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      activeColor: Colors.white,
+                      thumbColor: Colors.red.shade900,
+                      max: 250,
+                      min: 0,
+                      value: bmiProvider.getHeightBMI.toDouble(),
+                      onChanged: (value) {
+                        bmiProvider.setSlideHeight(value.toInt());
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }),
+        Expanded(
+          child: Row(
+            children: [
+              Consumer<BMIProvider>(builder: (context, bmiProvider, child) {
+                return BMICardWidget(
+                  color: R.appColors.primaryColorDarker,
+                  child: MeaSurementWidget(
+                    sideSpace: constraint.maxWidth < 992 ? 12 : 10,
+                    centerSpace: constraint.maxWidth < 992 ? 20 : 5,
+                    sizelabel: constraint.maxWidth < 992 ? 20 : 15,
+                    sizeMeasure: 40,
+                    label: 'WEIGHT',
+                    measureLabel: 'kg',
+                    measure: bmiProvider.getWeightBMI,
+                    button1: AritMathicButton(
+                      bgColor: R.appColors.primaryColorLighter,
+                      splashColor: R.appColors.primaryColorDarker,
+                      iconColor: R.appColors.secondColor,
+                      radius: constraint.maxWidth < 992 ? 50 : 60,
+                      aritmathicIcon: Icons.remove,
+                      onTap: () {
+                        if (bmiProvider.getWeightBMI > 0) {
+                          bmiProvider.setDecrementWeight(weight!);
+                        }
+                      },
+                    ),
+                    button2: AritMathicButton(
+                      bgColor: R.appColors.primaryColorLighter,
+                      splashColor: R.appColors.primaryColorDarker,
+                      iconColor: R.appColors.secondColor,
+                      radius: constraint.maxWidth < 992 ? 50 : 60,
+                      aritmathicIcon: Icons.add,
+                      onTap: () {
+                        if (bmiProvider.getWeightBMI < 150) {
+                          bmiProvider.setIncrementWeight(weight!);
+                        }
+                      },
+                    ),
+                    slider: Slider(
+                      activeColor: Colors.white,
+                      thumbColor: Colors.red.shade900,
+                      max: 150,
+                      min: 0,
+                      value: bmiProvider.getWeightBMI.toDouble(),
+                      onChanged: (value) {
+                        bmiProvider.setSlideWeight(value.toInt());
+                      },
+                    ),
+                  ),
+                );
+              }),
+              Consumer<BMIProvider>(builder: (context, bmiProvider, child) {
+                return BMICardWidget(
+                  color: R.appColors.primaryColorDarker,
+                  child: MeaSurementWidget(
+                    sideSpace: constraint.maxWidth < 992 ? 12 : 10,
+                    centerSpace: constraint.maxWidth < 992 ? 20 : 5,
+                    sizelabel: constraint.maxWidth < 992 ? 20 : 15,
+                    sizeMeasure: 40,
+                    label: 'AGE',
+                    measureLabel: 'y.o',
+                    button1: AritMathicButton(
+                      bgColor: R.appColors.primaryColorLighter,
+                      splashColor: R.appColors.primaryColorDarker,
+                      iconColor: R.appColors.secondColor,
+                      radius: constraint.maxWidth < 992 ? 50 : 60,
+                      aritmathicIcon: Icons.remove,
+                      onTap: () {
+                        if (bmiProvider.getAgeBMI > 0) {
+                          bmiProvider.setIncrementAge(age!);
+                        }
+                      },
+                    ),
+                    button2: AritMathicButton(
+                      bgColor: R.appColors.primaryColorLighter,
+                      splashColor: R.appColors.primaryColorDarker,
+                      iconColor: R.appColors.secondColor,
+                      radius: constraint.maxWidth < 992 ? 50 : 60,
+                      aritmathicIcon: Icons.add,
+                      onTap: () {
+                        if (bmiProvider.getAgeBMI < 150) {
+                          bmiProvider.setIncrementAge(age!);
+                        }
+                      },
+                    ),
+                    measure: bmiProvider.getAgeBMI,
+                    slider: Slider(
+                      activeColor: Colors.white,
+                      thumbColor: Colors.red.shade900,
+                      max: 150,
+                      min: 0,
+                      value: bmiProvider.getAgeBMI.toDouble(),
+                      onChanged: (value) {
+                        bmiProvider.setSlideAge(value.toInt());
+                      },
+                    ),
+                  ),
+                );
+              }),
+            ],
+          ),
         ),
-      ),
+        Consumer<BMIProvider>(builder: (context, bmiProvider, child) {
+          return Padding(
+            padding: const EdgeInsets.all(10),
+            child: GestureDetector(
+              onTap: () {
+                final BMICalculatorProvider bmiCalculatorProvider =
+                    Provider.of<BMICalculatorProvider>(context, listen: false);
+
+                if (bmiProvider.gender != null) {
+                  // bmiCalculator.calculate();
+                  bmiCalculatorProvider.calculate(
+                      height: bmiProvider.getHeightBMI,
+                      weight: bmiProvider.getWeightBMI);
+                  Navigator.pushNamed(
+                    context,
+                    Routes.loadingScreen,
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text(
+                        'Please select one of the gender, and try again!',
+                        maxLines: 2,
+                      ),
+                      behavior: SnackBarBehavior.floating,
+                      duration: const Duration(seconds: 2),
+                      dismissDirection: DismissDirection.horizontal,
+                      margin: EdgeInsets.symmetric(
+                          vertical: MediaQuery.of(context).size.height * 0.08,
+                          horizontal: 10),
+                    ),
+                  );
+                }
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.red.shade900,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 20,
+                        color: Colors.red.shade800,
+                        offset: const Offset(0, 2),
+                        spreadRadius: 2,
+                      ),
+                    ]),
+                height: constraint.maxWidth < 992 ? 60 : 45,
+                width: widthTombol,
+                child: Center(
+                  child: Text(
+                    'Calculate Your BMI',
+                    style: R.appTextStyle.calculateTextStyle,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }),
+      ],
     );
   }
 }

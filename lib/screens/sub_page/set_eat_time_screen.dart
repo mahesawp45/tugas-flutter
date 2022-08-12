@@ -207,7 +207,6 @@ class _SetEatTimeScreenState extends State<SetEatTimeScreen> {
                   ],
                 );
               }),
-              const Spacer(),
               Padding(
                 padding: const EdgeInsets.only(right: 20),
                 child: Align(
@@ -218,7 +217,6 @@ class _SetEatTimeScreenState extends State<SetEatTimeScreen> {
                   }),
                 ),
               ),
-              const Spacer(),
               Text(
                 'Timezone',
                 style: R.appTextStyle.clockTextStyle,
@@ -247,9 +245,6 @@ class _SetEatTimeScreenState extends State<SetEatTimeScreen> {
                   alarm: alarms[0],
                   gradientColor: gradientColor,
                 ),
-              ),
-              const Spacer(
-                flex: 5,
               ),
             ],
           ),

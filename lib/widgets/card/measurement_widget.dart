@@ -29,51 +29,49 @@ class MeaSurementWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(height: sideSpace),
-          Expanded(
-            flex: 1,
-            child: Text(
-              label,
-              style: R.appTextStyle.labelTextStyle
-                  .copyWith(fontSize: sizelabel * 0.8),
-            ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(height: sideSpace),
+        Expanded(
+          flex: 1,
+          child: Text(
+            label,
+            style: R.appTextStyle.labelTextStyle
+                .copyWith(fontSize: sizelabel * 0.8),
           ),
-          SizedBox(height: centerSpace),
-          Expanded(
-            flex: 2,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  '${measure.toInt()}',
-                  style: TextStyle(
-                    fontSize: sizeMeasure,
-                    color: Colors.white,
-                  ),
+        ),
+        SizedBox(height: centerSpace),
+        Expanded(
+          flex: 2,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '${measure.toInt()}',
+                style: TextStyle(
+                  fontSize: sizeMeasure,
+                  color: Colors.white,
                 ),
-                Text(
-                  measureLabel,
-                  style: R.appTextStyle.labelTextStyle.copyWith(fontSize: 12),
-                ),
-              ],
-            ),
+              ),
+              Text(
+                measureLabel,
+                style: R.appTextStyle.labelTextStyle.copyWith(fontSize: 12),
+              ),
+            ],
           ),
-          slider,
-          Expanded(
-            flex: 1,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [button1, button2],
-            ),
+        ),
+        slider,
+        Expanded(
+          flex: 1,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [button1, button2],
           ),
-          SizedBox(height: sideSpace),
-        ],
-      ),
+        ),
+        SizedBox(height: sideSpace),
+      ],
     );
   }
 }

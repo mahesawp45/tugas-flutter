@@ -31,6 +31,22 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   @override
+  void dispose() {
+    Timer.periodic(
+      const Duration(milliseconds: 500),
+      (timer) {
+        setState(() {
+          isFirst = !isFirst;
+        });
+      },
+    ).cancel();
+    Timer(const Duration(seconds: 2), () {
+      Navigator.pushReplacementNamed(context, Routes.bmiResultScreen);
+    }).cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
