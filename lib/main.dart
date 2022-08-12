@@ -1,8 +1,11 @@
-import 'package:bmi_app/R/r.dart';
+import 'package:bmi_app/preferences/dark_theme_pref.dart';
 import 'package:bmi_app/providers/bmi_calculator_provider.dart';
 import 'package:bmi_app/providers/bmi_provider.dart';
 import 'package:bmi_app/providers/clock_provider.dart';
+import 'package:bmi_app/providers/dark_theme_provider.dart';
 import 'package:bmi_app/screens/loading_screen.dart';
+import 'package:bmi_app/screens/splash_screen.dart';
+import 'package:bmi_app/styles/theme_styles.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
@@ -40,8 +43,30 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  DarkThemeProvider themeChangeProvider = DarkThemeProvider();
+
+  var theme;
+
+  @override
+  void initState() {
+    theme = DarkThemePreference().getTheme();
+    super.initState();
+    getCurrentAppTheme();
+  }
+
+  void getCurrentAppTheme() async {
+    themeChangeProvider.darkTheme =
+        await themeChangeProvider.darkThemePreference.getTheme();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -49,28 +74,21 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => ClockProvider()),
         ChangeNotifierProvider(create: (context) => BMIProvider()),
         ChangeNotifierProvider(create: (context) => BMICalculatorProvider()),
+        ChangeNotifierProvider(create: (context) => DarkThemeProvider()),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        initialRoute: Routes.bmiDataScreen,
-        routes: {
-          Routes.bmiDataScreen: (context) => const BMIDataScreen(),
-          Routes.bmiResultScreen: (context) => const BMIResultScreen(),
-          Routes.loadingScreen: (context) => const LoadingScreen(),
-        },
-        theme: ThemeData(
-          primaryColor: R.appColors.primaryColor,
-          scaffoldBackgroundColor: R.appColors.primaryColor,
-          appBarTheme: AppBarTheme(
-            backgroundColor: R.appColors.primaryColor,
-          ),
-          drawerTheme: DrawerThemeData(
-            backgroundColor: R.appColors.primaryColorDarker,
-          ),
-          colorScheme:
-              ColorScheme.fromSwatch().copyWith(secondary: Colors.transparent),
-        ),
-      ),
+      child: Consumer<DarkThemeProvider>(builder: (context, vakue, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          initialRoute: Routes.splashScreen,
+          routes: {
+            Routes.splashScreen: (context) => const SplashScreen(),
+            Routes.bmiDataScreen: (context) => const BMIDataScreen(),
+            Routes.bmiResultScreen: (context) => const BMIResultScreen(),
+            Routes.loadingScreen: (context) => const LoadingScreen(),
+          },
+          theme: Styles.themeData(vakue.darkTheme, context),
+        );
+      }),
     );
   }
 }

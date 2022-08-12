@@ -12,8 +12,18 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
+  bool isFirst = true;
+
   @override
   void initState() {
+    Timer.periodic(
+      const Duration(milliseconds: 500),
+      (timer) {
+        setState(() {
+          isFirst = !isFirst;
+        });
+      },
+    );
     Timer(const Duration(seconds: 2), () {
       Navigator.pushReplacementNamed(context, Routes.bmiResultScreen);
     });
@@ -25,15 +35,29 @@ class _LoadingScreenState extends State<LoadingScreen> {
     return Scaffold(
       body: Center(
         child: SizedBox(
-          height: 100,
-          width: 100,
+          height: 200,
+          width: 200,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              MainMenuButton(),
-              SizedBox(height: 20),
-              Text(
+            children: [
+              AnimatedCrossFade(
+                sizeCurve: Curves.linear,
+                firstChild: const Padding(
+                  padding: EdgeInsets.all(20),
+                  child: MainMenuButton(size: 45),
+                ),
+                secondChild: const Padding(
+                  padding: EdgeInsets.all(20),
+                  child: MainMenuButton(size: 60),
+                ),
+                crossFadeState: isFirst
+                    ? CrossFadeState.showFirst
+                    : CrossFadeState.showSecond,
+                duration: const Duration(milliseconds: 500),
+              ),
+              const SizedBox(height: 10),
+              const Text(
                 'Loading...',
                 style: TextStyle(
                   fontSize: 20,

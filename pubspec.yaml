@@ -31,6 +31,8 @@ dependencies:
   dotted_border: ^2.0.0+2
   flutter:
     sdk: flutter
+  flutter_rating_bar: ^4.0.1
+  flutter_share: ^2.0.0
   intl: ^0.17.0
   provider: ^6.0.3
   shared_preferences: ^2.0.15

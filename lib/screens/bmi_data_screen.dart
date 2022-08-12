@@ -1,10 +1,13 @@
 import 'package:bmi_app/R/r.dart';
+import 'package:bmi_app/preferences/dark_theme_pref.dart';
 
 import 'package:bmi_app/providers/bmi_calculator_provider.dart';
 import 'package:bmi_app/providers/bmi_provider.dart';
 import 'package:bmi_app/providers/clock_provider.dart';
-import 'package:bmi_app/screens/sub_page/add_eat_alarm.dart';
+import 'package:bmi_app/providers/dark_theme_provider.dart';
+import 'package:bmi_app/screens/sub_page/add_eat_alarm_screen.dart';
 import 'package:bmi_app/screens/sub_page/challenge_screen.dart';
+import 'package:bmi_app/screens/sub_page/review_us_screen.dart';
 import 'package:bmi_app/screens/sub_page/set_eat_time_screen.dart';
 import 'package:bmi_app/widgets/button/main_menu_button.dart';
 import 'package:bmi_app/widgets/button/menu_button_widget.dart';
@@ -12,10 +15,12 @@ import 'package:bmi_app/widgets/card/bmi_card_widget.dart';
 import 'package:bmi_app/widgets/card/gender_widget.dart';
 import 'package:bmi_app/widgets/card/measurement_widget.dart';
 import 'package:bmi_app/widgets/mini/title_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bmi_app/routes/app_pages.dart';
 import 'package:bmi_app/widgets/button/aritmathic_button_widget.dart';
+import 'package:flutter_share/flutter_share.dart';
 import 'package:provider/provider.dart';
 
 class BMIDataScreen extends StatefulWidget {
@@ -30,10 +35,21 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
   int? height;
   int? weight;
   int? age;
+  DarkThemeProvider? themeChange;
 
   final PageController _pageController = PageController();
   String? title;
   int index = 0;
+
+  Future<void> share() async {
+    await FlutterShare.share(
+      title: 'BMI CALCULATOR',
+      text: R.appStrings.shareMessage,
+      linkUrl: 'https://github.com/mahesawp45/tugas-flutter',
+      chooserTitle: 'Share Us On',
+    );
+  }
+
   @override
   void initState() {
     bmiProvider = Provider.of<BMIProvider>(context, listen: false);
@@ -41,6 +57,7 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
     height = bmiProvider?.getHeightBMI;
     weight = bmiProvider?.getWeightBMI;
     age = bmiProvider?.getAgeBMI;
+    themeChange = Provider.of<DarkThemeProvider>(context, listen: false);
     super.initState();
   }
 
@@ -52,6 +69,7 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(themeChange?.darkTheme);
     final widthTombol = MediaQuery.of(context).size.width;
     var paddingTop = MediaQuery.of(context).padding.top;
     var spacerMenu = MediaQuery.of(context).size.height * 0.1;
@@ -95,6 +113,9 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
                   ),
                   const AddEatAlarmScreen(
                     title: 'Set Alarm',
+                  ),
+                  const ReviewUsScreen(
+                    title: 'Review Us',
                   ),
                 ],
               ),
@@ -183,22 +204,40 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
                   ),
                   MenuButton(
                     constraints: constraint,
+                    bgColor: title == 'Review Us'
+                        ? MaterialStateProperty.all(Colors.red.shade900)
+                        : MaterialStateProperty.all(Colors.transparent),
                     icon: Icons.star,
-                    title: '',
-                    onTap: () {},
+                    title: 'Review Us',
+                    onTap: () {
+                      index = 4;
+                      title = 'Review Us';
+                      pageController.animateToPage(index,
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeInOut);
+                      setState(() {});
+                    },
                   ),
                   MenuButton(
                     constraints: constraint,
                     icon: Icons.share,
                     title: '',
-                    onTap: () {},
+                    onTap: () async {
+                      await share();
+                    },
                   ),
-                  MenuButton(
-                    constraints: constraint,
-                    icon: Icons.settings,
-                    title: '',
-                    onTap: () {},
-                  ),
+                  Consumer<DarkThemeProvider>(builder: (context, dark, child) {
+                    return CupertinoSwitch(
+                      activeColor: Colors.white,
+                      trackColor: Colors.white,
+                      thumbColor: Colors.red,
+                      value: dark.darkTheme,
+                      onChanged: (value) {
+                        dark.darkTheme = value;
+                        DarkThemePreference().setDarkTheme(value);
+                      },
+                    );
+                  }),
                 ],
               ),
             ),
