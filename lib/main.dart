@@ -1,4 +1,3 @@
-import 'package:bmi_app/preferences/dark_theme_pref.dart';
 import 'package:bmi_app/providers/bmi_calculator_provider.dart';
 import 'package:bmi_app/providers/bmi_provider.dart';
 import 'package:bmi_app/providers/clock_provider.dart';
@@ -53,11 +52,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   DarkThemeProvider themeChangeProvider = DarkThemeProvider();
 
-  var theme;
-
   @override
   void initState() {
-    theme = DarkThemePreference().getTheme();
     super.initState();
     getCurrentAppTheme();
   }
