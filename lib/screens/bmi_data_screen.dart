@@ -1,5 +1,4 @@
 import 'package:bmi_app/R/r.dart';
-import 'package:bmi_app/preferences/dark_theme_pref.dart';
 
 import 'package:bmi_app/providers/bmi_calculator_provider.dart';
 import 'package:bmi_app/providers/bmi_provider.dart';
@@ -69,7 +68,6 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(themeChange?.darkTheme);
     final widthTombol = MediaQuery.of(context).size.width;
     var paddingTop = MediaQuery.of(context).padding.top;
     var spacerMenu = MediaQuery.of(context).size.height * 0.1;
@@ -224,15 +222,15 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
                     await share();
                   },
                 ),
-                Consumer<DarkThemeProvider>(builder: (context, dark, child) {
+                Consumer<DarkThemeProvider>(
+                    builder: (context, darkThemeProvider, child) {
                   return CupertinoSwitch(
                     activeColor: Colors.white,
                     trackColor: Colors.white,
                     thumbColor: Colors.red,
-                    value: dark.darkTheme,
+                    value: darkThemeProvider.darkTheme,
                     onChanged: (value) {
-                      dark.darkTheme = value;
-                      DarkThemePreference().setDarkTheme(value);
+                      darkThemeProvider.darkTheme = value;
                     },
                   );
                 }),
@@ -450,7 +448,7 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
                       aritmathicIcon: Icons.remove,
                       onTap: () {
                         if (bmiProvider.getAgeBMI > 0) {
-                          bmiProvider.setIncrementAge(age!);
+                          bmiProvider.setDecrementAge(age!);
                         }
                       },
                     ),

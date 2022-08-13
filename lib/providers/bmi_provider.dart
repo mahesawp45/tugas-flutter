@@ -96,6 +96,5 @@ class BMIProvider extends ChangeNotifier {
     _isFemale = false;
     _isMale = false;
     gender = BMICalculatorProvider().gender;
-    notifyListeners();
   }
 }

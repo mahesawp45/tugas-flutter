@@ -14,17 +14,19 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   bool isFirst = false;
+  late Timer timerPeriodic;
+  late Timer timerToPage;
 
   @override
   void initState() {
-    Timer.periodic(
+    timerPeriodic = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
         isFirst = !isFirst;
         setState(() {});
       },
     );
-    Timer(const Duration(seconds: 5), () {
+    timerToPage = Timer(const Duration(seconds: 5), () {
       Navigator.pushReplacementNamed(context, Routes.bmiDataScreen);
     });
     super.initState();
@@ -32,17 +34,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void dispose() {
-    Timer.periodic(
-      const Duration(seconds: 1),
-      (timer) {
-        setState(() {
-          isFirst = !isFirst;
-        });
-      },
-    ).cancel();
-    Timer(const Duration(seconds: 5), () {
-      Navigator.pushReplacementNamed(context, Routes.bmiDataScreen);
-    }).cancel();
+    timerPeriodic.cancel();
+    timerToPage.cancel();
     super.dispose();
   }
 

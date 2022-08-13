@@ -12,19 +12,21 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-  bool isFirst = true;
+  bool isLoading = true;
+  late Timer timerPeriodic;
+  late Timer timerToPage;
 
   @override
   void initState() {
-    Timer.periodic(
+    timerPeriodic = Timer.periodic(
       const Duration(milliseconds: 500),
       (timer) {
         setState(() {
-          isFirst = !isFirst;
+          isLoading = !isLoading;
         });
       },
     );
-    Timer(const Duration(seconds: 2), () {
+    timerToPage = Timer(const Duration(seconds: 2), () {
       Navigator.pushReplacementNamed(context, Routes.bmiResultScreen);
     });
     super.initState();
@@ -32,17 +34,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   @override
   void dispose() {
-    Timer.periodic(
-      const Duration(milliseconds: 500),
-      (timer) {
-        setState(() {
-          isFirst = !isFirst;
-        });
-      },
-    ).cancel();
-    Timer(const Duration(seconds: 2), () {
-      Navigator.pushReplacementNamed(context, Routes.bmiResultScreen);
-    }).cancel();
+    timerPeriodic.cancel();
+    timerToPage.cancel();
     super.dispose();
   }
 
@@ -67,7 +60,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   padding: EdgeInsets.all(20),
                   child: MainMenuButton(size: 60),
                 ),
-                crossFadeState: isFirst
+                crossFadeState: isLoading
                     ? CrossFadeState.showFirst
                     : CrossFadeState.showSecond,
                 duration: const Duration(milliseconds: 500),

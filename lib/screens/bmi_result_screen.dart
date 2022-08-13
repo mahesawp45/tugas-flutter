@@ -1,42 +1,19 @@
 import 'package:bmi_app/R/r.dart';
 import 'package:bmi_app/providers/bmi_calculator_provider.dart';
-import 'package:bmi_app/providers/bmi_provider.dart';
-import 'package:bmi_app/providers/clock_provider.dart';
 import 'package:bmi_app/widgets/card/bmi_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class BMIResultScreen extends StatefulWidget {
+class BMIResultScreen extends StatelessWidget {
   const BMIResultScreen({Key? key}) : super(key: key);
 
   @override
-  State<BMIResultScreen> createState() => _BMIResultScreenState();
-}
-
-class _BMIResultScreenState extends State<BMIResultScreen> {
-  BMICalculatorProvider? bmiCalculatorProvider;
-  BMIProvider? bmiProvider;
-  double? bmi;
-
-  @override
-  void initState() {
-    bmiCalculatorProvider =
-        Provider.of<BMICalculatorProvider>(context, listen: false);
-    bmiProvider = Provider.of<BMIProvider>(context, listen: false);
-    bmiCalculatorProvider?.determineBMICategory();
-    bmiCalculatorProvider?.getHealthRiskDescription();
-    bmi = bmiCalculatorProvider?.bmi;
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    ClockProvider().dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    BMICalculatorProvider bmiCalculatorProvider =
+        Provider.of<BMICalculatorProvider>(context, listen: false);
+    bmiCalculatorProvider.determineBMICategory();
+    bmiCalculatorProvider.getHealthRiskDescription();
+    double? bmi = bmiCalculatorProvider.bmi;
     final widthTombol = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -95,7 +72,7 @@ class _BMIResultScreenState extends State<BMIResultScreen> {
                     Consumer<BMICalculatorProvider>(
                         builder: (context, bmiCalcuProvider, child) {
                       return Text(
-                        bmiCalculatorProvider?.bmiDescription ?? '',
+                        bmiCalculatorProvider.bmiDescription ?? '',
                         textAlign: TextAlign.center,
                         style: R.appTextStyle.labelTextStyle
                             .copyWith(fontSize: 20),

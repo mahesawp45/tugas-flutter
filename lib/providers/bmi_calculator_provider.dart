@@ -59,7 +59,6 @@ class BMICalculatorProvider extends ChangeNotifier {
       resultColor = resultColors[5];
     }
 
-    notifyListeners();
     return bmiCategory!;
   }
 
@@ -85,7 +84,6 @@ class BMICalculatorProvider extends ChangeNotifier {
         break;
     }
 
-    notifyListeners();
     return bmiDescription!;
   }
 }

@@ -1,9 +1,8 @@
 import 'package:bmi_app/R/r.dart';
-import 'package:bmi_app/providers/clock_provider.dart';
 import 'package:bmi_app/widgets/mini/title_widget.dart';
 import 'package:flutter/material.dart';
 
-class ChallangeScreen extends StatefulWidget {
+class ChallangeScreen extends StatelessWidget {
   const ChallangeScreen({
     Key? key,
     required this.title,
@@ -13,17 +12,6 @@ class ChallangeScreen extends StatefulWidget {
   final String title;
 
   final double? paddingTop;
-
-  @override
-  State<ChallangeScreen> createState() => _ChallangeScreenState();
-}
-
-class _ChallangeScreenState extends State<ChallangeScreen> {
-  @override
-  void dispose() {
-    ClockProvider().dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +24,11 @@ class _ChallangeScreenState extends State<ChallangeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: widget.paddingTop),
+              SizedBox(height: paddingTop),
               Padding(
                 padding: const EdgeInsets.only(top: 10),
                 child: TitleWidget(
-                  title: widget.title,
+                  title: title,
                 ),
               ),
               Expanded(

@@ -1,5 +1,4 @@
 import 'package:bmi_app/R/r.dart';
-import 'package:bmi_app/providers/clock_provider.dart';
 import 'package:bmi_app/widgets/mini/title_widget.dart';
 import 'package:bmi_app/widgets/object/alarm_widget.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -8,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:bmi_app/data/data.dart';
 import 'package:bmi_app/data/theme_data.dart';
 
-class AddEatAlarmScreen extends StatefulWidget {
+class AddEatAlarmScreen extends StatelessWidget {
   const AddEatAlarmScreen({
     Key? key,
     required this.title,
@@ -17,17 +16,6 @@ class AddEatAlarmScreen extends StatefulWidget {
 
   final String title;
   final double? paddingTop;
-
-  @override
-  State<AddEatAlarmScreen> createState() => _AddEatAlarmScreenState();
-}
-
-class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
-  @override
-  void dispose() {
-    ClockProvider().dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +34,7 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: TitleWidget(
-              title: widget.title.toString(),
+              title: title.toString(),
             ),
           ),
           Expanded(
@@ -62,7 +50,7 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 50),
                   child: DottedBorder(
-                    strokeWidth: 3,
+                    strokeWidth: 2,
                     dashPattern: const [5, 4],
                     borderType: BorderType.RRect,
                     radius: const Radius.circular(24),

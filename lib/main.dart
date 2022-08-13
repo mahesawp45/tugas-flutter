@@ -55,12 +55,12 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    getCurrentAppTheme();
+    getCurrentAppTheme().then((value) => themeChangeProvider.darkTheme = value);
   }
 
-  void getCurrentAppTheme() async {
-    themeChangeProvider.darkTheme =
-        await themeChangeProvider.darkThemePreference.getTheme();
+  Future<bool> getCurrentAppTheme() async {
+    var dark = await themeChangeProvider.darkThemePreference.getTheme();
+    return themeChangeProvider.darkTheme = dark;
   }
 
   @override
@@ -72,7 +72,8 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (context) => BMICalculatorProvider()),
         ChangeNotifierProvider(create: (context) => DarkThemeProvider()),
       ],
-      child: Consumer<DarkThemeProvider>(builder: (context, vakue, child) {
+      child: Consumer<DarkThemeProvider>(
+          builder: (context, darkThemeProvider, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           initialRoute: Routes.splashScreen,
@@ -82,7 +83,7 @@ class _MyAppState extends State<MyApp> {
             Routes.bmiResultScreen: (context) => const BMIResultScreen(),
             Routes.loadingScreen: (context) => const LoadingScreen(),
           },
-          theme: Styles.themeData(vakue.darkTheme, context),
+          theme: Styles.themeData(darkThemeProvider.darkTheme, context),
         );
       }),
     );
