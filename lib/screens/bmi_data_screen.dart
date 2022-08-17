@@ -363,15 +363,22 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
                     ),
                   ),
                   Expanded(
-                    child: Slider(
-                      activeColor: Colors.white,
-                      thumbColor: Colors.red.shade900,
-                      max: 250,
-                      min: 0,
-                      value: bmiProvider.getHeightBMI.toDouble(),
-                      onChanged: (value) {
-                        bmiProvider.setSlideHeight(value.toInt());
-                      },
+                    child: SliderTheme(
+                      data: SliderThemeData(
+                        trackHeight: 5,
+                        thumbShape: RoundSliderThumbShape(
+                            enabledThumbRadius: bmiProvider.getHeightBMI / 15),
+                      ),
+                      child: Slider(
+                        activeColor: Colors.white,
+                        thumbColor: Colors.red.shade900,
+                        max: 250,
+                        min: 0,
+                        value: bmiProvider.getHeightBMI.toDouble(),
+                        onChanged: (value) {
+                          bmiProvider.setSlideHeight(value.toInt());
+                        },
+                      ),
                     ),
                   ),
                 ],
@@ -417,15 +424,23 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
                         }
                       },
                     ),
-                    slider: Slider(
-                      activeColor: Colors.white,
-                      thumbColor: Colors.red.shade900,
-                      max: 150,
-                      min: 0,
-                      value: bmiProvider.getWeightBMI.toDouble(),
-                      onChanged: (value) {
-                        bmiProvider.setSlideWeight(value.toInt());
-                      },
+                    slider: SliderTheme(
+                      data: SliderThemeData(
+                        trackHeight: 5,
+                        thumbShape: RoundSliderThumbShape(
+                          enabledThumbRadius: bmiProvider.getWeightBMI / 10,
+                        ),
+                      ),
+                      child: Slider(
+                        activeColor: Colors.white,
+                        thumbColor: Colors.red.shade900,
+                        max: 150,
+                        min: 0,
+                        value: bmiProvider.getWeightBMI.toDouble(),
+                        onChanged: (value) {
+                          bmiProvider.setSlideWeight(value.toInt());
+                        },
+                      ),
                     ),
                   ),
                 );
@@ -465,15 +480,22 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
                       },
                     ),
                     measure: bmiProvider.getAgeBMI,
-                    slider: Slider(
-                      activeColor: Colors.white,
-                      thumbColor: Colors.red.shade900,
-                      max: 150,
-                      min: 0,
-                      value: bmiProvider.getAgeBMI.toDouble(),
-                      onChanged: (value) {
-                        bmiProvider.setSlideAge(value.toInt());
-                      },
+                    slider: SliderTheme(
+                      data: SliderThemeData(
+                        trackHeight: 5,
+                        thumbShape: RoundSliderThumbShape(
+                            enabledThumbRadius: bmiProvider.getAgeBMI / 10),
+                      ),
+                      child: Slider(
+                        activeColor: Colors.white,
+                        thumbColor: Colors.red.shade900,
+                        max: 150,
+                        min: 0,
+                        value: bmiProvider.getAgeBMI.toDouble(),
+                        onChanged: (value) {
+                          bmiProvider.setSlideAge(value.toInt());
+                        },
+                      ),
                     ),
                   ),
                 );

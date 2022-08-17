@@ -97,11 +97,14 @@ class SetEatTimeScreen extends StatelessWidget {
                             color: Colors.white,
                           ),
                           const SizedBox(width: 10),
-                          Text(
-                            'UTC $offSetSign $timeZone',
-                            style: R.appTextStyle.clockTextStyle
-                                .copyWith(fontSize: 14),
-                          ),
+                          Consumer<ClockProvider>(
+                              builder: (context, clockProvider, child) {
+                            return Text(
+                              'UTC $offSetSign ${clockProvider.timeZone}',
+                              style: R.appTextStyle.clockTextStyle
+                                  .copyWith(fontSize: 14),
+                            );
+                          }),
                         ],
                       ),
                       const SizedBox(height: 50),
@@ -201,10 +204,14 @@ class SetEatTimeScreen extends StatelessWidget {
                     color: Colors.white,
                   ),
                   const SizedBox(width: 10),
-                  Text(
-                    'UTC $offSetSign $timeZone',
-                    style: R.appTextStyle.clockTextStyle.copyWith(fontSize: 14),
-                  ),
+                  Consumer<ClockProvider>(
+                      builder: (context, clockProvider, child) {
+                    return Text(
+                      'UTC $offSetSign ${clockProvider.timeZone ?? ""}',
+                      style:
+                          R.appTextStyle.clockTextStyle.copyWith(fontSize: 14),
+                    );
+                  }),
                 ],
               ),
               const SizedBox(height: 50),

@@ -1,4 +1,5 @@
 import 'package:bmi_app/R/r.dart';
+import 'package:bmi_app/database/database_instance.dart';
 import 'package:bmi_app/widgets/mini/title_widget.dart';
 import 'package:bmi_app/widgets/object/alarm_widget.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -7,7 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:bmi_app/data/data.dart';
 import 'package:bmi_app/data/theme_data.dart';
 
-class AddEatAlarmScreen extends StatelessWidget {
+class AddEatAlarmScreen extends StatefulWidget {
   const AddEatAlarmScreen({
     Key? key,
     required this.title,
@@ -16,6 +17,25 @@ class AddEatAlarmScreen extends StatelessWidget {
 
   final String title;
   final double? paddingTop;
+
+  @override
+  State<AddEatAlarmScreen> createState() => _AddEatAlarmScreenState();
+}
+
+class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
+  DatabaseInstance? databaseInstance;
+
+  initDatabase() async {
+    await databaseInstance?.database();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    databaseInstance = DatabaseInstance();
+    initDatabase();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +54,7 @@ class AddEatAlarmScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: TitleWidget(
-              title: title.toString(),
+              title: widget.title.toString(),
             ),
           ),
           Expanded(
@@ -101,6 +121,9 @@ class AddEatAlarmScreen extends StatelessWidget {
 
   _buildAddAlarmPanel(BuildContext context, DateTime? alarmTime,
       String alarmTimeString, bool isRepeatSelected) async {
+    TextEditingController titleC = TextEditingController();
+    String title = 'Title';
+
     showModalBottomSheet(
       backgroundColor: R.appColors.primaryColorLighter,
       context: context,
@@ -156,25 +179,98 @@ class AddEatAlarmScreen extends StatelessWidget {
                       value: isRepeatSelected,
                     ),
                   ),
+                  // ListTile(
+                  //   title: Text(
+                  //     'Sound',
+                  //     style: R.appTextStyle.clockTextStyle,
+                  //   ),
+                  //   trailing: const Icon(Icons.arrow_forward_ios,
+                  //       color: Colors.white),
+                  // ),
                   ListTile(
                     title: Text(
-                      'Sound',
+                      title,
                       style: R.appTextStyle.clockTextStyle,
                     ),
-                    trailing: const Icon(Icons.arrow_forward_ios,
-                        color: Colors.white),
-                  ),
-                  ListTile(
-                    title: Text(
-                      'Title',
-                      style: R.appTextStyle.clockTextStyle,
-                    ),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            backgroundColor: R.appColors.primaryColorLighter,
+                            title: const Text(
+                              'Add Title',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                            content: Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.white),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: TextField(
+                                controller: titleC,
+                                style: const TextStyle(color: Colors.white),
+                                cursorColor: Colors.white,
+                                decoration: const InputDecoration(
+                                  focusColor: Colors.white,
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                            actions: [
+                              _buildCancelButton(context),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  primary: Colors.white,
+                                ),
+                                onPressed: () {
+                                  setModalState(() {
+                                    title = titleC.text;
+                                  });
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  'Done',
+                                  style: TextStyle(
+                                      color: R.appColors.primaryColor),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                            ],
+                          );
+                        },
+                      );
+                    },
                     trailing: const Icon(Icons.arrow_forward_ios,
                         color: Colors.white),
                   ),
                   FloatingActionButton.extended(
-                    onPressed: () {
-                      // onSaveAlarm(isRepeatSelected);
+                    onPressed: () async {
+                      if (title.toLowerCase() == 'title') {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            behavior: SnackBarBehavior.floating,
+                            content:
+                                Text('Please define a name for a new alarm'),
+                          ),
+                        );
+                      } else {
+                        await databaseInstance?.insertData(data: {
+                          '${Data.title}': title,
+                          '${Data.date}': alarmTime?.toIso8601String(),
+                          '${Data.time}': alarmTime?.toIso8601String(),
+                          '${Data.isActive}': true,
+                          '${Data.isRepeat}': isRepeatSelected,
+                        });
+                      }
                     },
                     icon: const Icon(Icons.alarm),
                     label: const Text('Save'),
@@ -185,6 +281,20 @@ class AddEatAlarmScreen extends StatelessWidget {
           },
         );
       },
+    );
+  }
+
+  TextButton _buildCancelButton(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        Navigator.pop(context);
+      },
+      child: const Text(
+        'Cancel',
+        style: TextStyle(
+          color: Colors.white,
+        ),
+      ),
     );
   }
 }
