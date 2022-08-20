@@ -1,4 +1,5 @@
 import 'package:bmi_app/R/r.dart';
+import 'package:bmi_app/database/alarm_hive.dart';
 import 'package:bmi_app/main.dart';
 import 'package:bmi_app/widgets/mini/title_widget.dart';
 import 'package:bmi_app/widgets/object/alarm_widget.dart';
@@ -23,63 +24,64 @@ class AddEatAlarmScreen extends StatefulWidget {
 }
 
 class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
-  List<Map<String, dynamic>> items = [];
+  List<AlarmHive> alarms = [];
 
-  final myalarm = Hive.box(alarmBox);
+  Box? myalarm;
 
   @override
   void initState() {
     super.initState();
-    _refreshItems(); // Bakal ngeload DB pas buka ini app
+    _initHive();
+    _refreshAlarms();
   }
 
-  // Get all items from the database
-  void _refreshItems() {
-    final data = myalarm.keys.map((key) {
-      final value = myalarm.get(key);
-      return {
-        'key': key,
-        'title': value['title'],
-        'alarmDateTime': value['alarmDateTime'],
-        'isActive': value['isActive'],
-        'isRepeat': value['isRepeat'],
-        'gradientColorIndex': value['gradientColorIndex'],
-      };
+  _initHive() async {
+    // BUAT DB
+    myalarm = await Hive.openBox(alarmBox);
+  }
+
+  // Get semua alarm dari DB
+  void _refreshAlarms() {
+    final data = myalarm?.keys.map((key) {
+      final value = myalarm?.get(key);
+      return AlarmHive()
+        ..title = value.title
+        ..alarmDateTime = value.alarmDateTime
+        ..isActive = value.isActive
+        ..isRepeat = value.isRepeat
+        ..gradientColorIndex = value.gradientColorIndex;
     }).toList();
 
     setState(() {
-      items = data.reversed.toList();
-      // we use "reversed" to sort items in order from the latest to the oldest
+      alarms = data?.reversed.toList() ?? [];
     });
   }
 
-  // Create new item
-  Future<void> _createItem(Map<String, dynamic> newItem) async {
-    await myalarm.add(newItem);
-    _refreshItems(); // update the UI
+  // CREATE alarm
+  _createAlarm(AlarmHive newAlarm) async {
+    await myalarm!.add(newAlarm);
+
+    _refreshAlarms();
   }
 
-  // Retrieve a single item from the database by using its key
-  // Our app won't use this function but I put it here for your reference
-  Map<String, dynamic> _readItem(int key) {
-    final item = myalarm.get(key);
-    return item;
+  // SHOW 1 alarm
+  Map<String, dynamic> _readAlarm(key) {
+    final alarm = myalarm?.get(key);
+    return alarm;
   }
 
-  // Update a single item
-  Future<void> _updateItem(int itemKey, Map<String, dynamic> item) async {
-    await myalarm.put(itemKey, item);
-    _refreshItems(); // Update the UI
+  // UPDATE alarm
+  _updateAlarm(itemKey, AlarmHive item) async {
+    await myalarm?.put(itemKey, item);
+    _refreshAlarms();
   }
 
-  // Delete a single item
-  Future<void> _deleteItem(int itemKey) async {
-    await myalarm.delete(itemKey);
-    _refreshItems(); // update the UI
-
-    // Display a snackbar
+  // DELETE alarm
+  _deleteAlarm(itemKey) async {
+    await myalarm?.delete(itemKey);
+    _refreshAlarms();
     ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An item has been deleted')));
+        const SnackBar(content: Text('An Alaram has been deleted')));
   }
 
   @override
@@ -108,15 +110,15 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
               physics: const BouncingScrollPhysics(),
               padding: const EdgeInsets.all(20),
               shrinkWrap: true,
-              children: items.map<Widget>((e) {
+              children: alarms.map<Widget>((e) {
                 var gradientColor = GradientTemplate
-                    .gradientTemplate[e['gradientColorIndex'] ?? 0].colors;
+                    .gradientTemplate[e.gradientColorIndex ?? 0].colors;
 
                 TextEditingController titleC = TextEditingController();
 
-                titleC.text = e['title'];
+                titleC.text = e.title!;
 
-                if (items.isEmpty) {
+                if (alarms.isEmpty) {
                   return const Text(
                     'NO ALARM',
                     style: TextStyle(
@@ -412,18 +414,19 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
 
                   FloatingActionButton.extended(
                     onPressed: () async {
-                      var data = {
-                        'title': titleVal,
-                        'alarmDateTime': alarmTime,
-                        'isActive': true,
-                        'isRepeat': isRepeatSelected,
-                        'gradientColorIndex': colorVal,
-                      };
+                      var data = AlarmHive()
+                        ..title = titleVal
+                        ..alarmDateTime = alarmTime
+                        ..isActive = true
+                        ..isRepeat = isRepeatSelected
+                        ..gradientColorIndex = colorVal
+                        ..key = DateTime.now().toString();
 
                       if (titleVal == 'Title') {
                         showTitleNullDialog();
                       } else {
-                        _createItem(data);
+                        _createAlarm(data);
+
                         Navigator.pop(context);
                       }
                     },

@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 
-part 'person.g.dart';
+part 'alarm_hive.g.dart';
 
 @HiveType(typeId: 1)
 class AlarmHive extends HiveObject {
@@ -19,10 +19,16 @@ class AlarmHive extends HiveObject {
   @HiveField(4, defaultValue: 0)
   int? gradientColorIndex;
 
-  AlarmHive(
-      {this.title,
-      this.alarmDateTime,
-      this.isActive,
-      this.isRepeat,
-      this.gradientColorIndex});
+  @override
+  @HiveField(5)
+  var key;
+
+  AlarmHive({
+    this.title,
+    this.alarmDateTime,
+    this.isActive,
+    this.isRepeat,
+    this.gradientColorIndex,
+    this.key,
+  });
 }

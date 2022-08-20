@@ -1,3 +1,4 @@
+import 'package:bmi_app/database/alarm_hive.dart';
 import 'package:flutter/material.dart';
 
 class AlarmWidget extends StatelessWidget {
@@ -7,7 +8,7 @@ class AlarmWidget extends StatelessWidget {
     required this.gradientColor,
   }) : super(key: key);
 
-  final Map<String, dynamic> data;
+  final AlarmHive data;
   final List<Color> gradientColor;
 
   @override
@@ -48,7 +49,7 @@ class AlarmWidget extends StatelessWidget {
                     width: 8,
                   ),
                   Text(
-                    data['title'] ?? '',
+                    data.title ?? '',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 15,
@@ -75,7 +76,7 @@ class AlarmWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "${data['alarmDateTime']?.hour.toString()} : ${data['alarmDateTime']?.minute.toString()}",
+                "${data.alarmDateTime?.hour.toString()} : ${data.alarmDateTime?.minute.toString()}",
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 24,

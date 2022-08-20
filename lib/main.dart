@@ -1,3 +1,4 @@
+import 'package:bmi_app/database/alarm_hive.dart';
 import 'package:bmi_app/providers/bmi_calculator_provider.dart';
 import 'package:bmi_app/providers/bmi_provider.dart';
 import 'package:bmi_app/providers/clock_provider.dart';
@@ -15,7 +16,7 @@ import 'screens/bmi_result_screen.dart';
 import 'screens/bmi_data_screen.dart';
 import 'package:flutter/material.dart';
 
-const String alarmBox = 'alarm';
+const String alarmBox = 'alarmhive';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,8 +24,8 @@ void main() async {
   // INIT HIVE
   await Hive.initFlutter();
 
-  // BUAT DB
-  await Hive.openBox(alarmBox);
+  // REGISTER si ADAPTER
+  Hive.registerAdapter(AlarmHiveAdapter());
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
