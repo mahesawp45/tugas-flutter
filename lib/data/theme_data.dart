@@ -15,6 +15,8 @@ class GradientColors {
 }
 
 class GradientTemplate {
+  static List<String> colorName = ['Sky', 'Sunset', 'Sea', 'Mango', 'Fire'];
+
   static List<GradientColors> gradientTemplate = [
     GradientColors(GradientColors.sky),
     GradientColors(GradientColors.sunset),

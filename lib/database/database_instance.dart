@@ -1,16 +1,15 @@
 import 'dart:io';
 
+import 'package:bmi_app/database/db_schema.dart';
 import 'package:bmi_app/models/alarm_model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
-enum Data { id, title, date, time, isActive, isRepeat }
-
 class DatabaseInstance {
   Database? _database;
   final String _databaseName = 'bmi_alarm.db';
-  final int _databaseVersion = 1;
+  final int _databaseVersion = 2;
   final String _table = 'alarm';
 
   Future database() async {
@@ -38,13 +37,20 @@ class DatabaseInstance {
 
   Future _onCreate(Database db, int version) async {
     await db.execute('''CREATE TABLE $_table (
-      ${Data.id} INTEGER  PRIMARY KEY,
-      ${Data.title} TEXT NULL,
-      ${Data.date} TEXT NULL,
-      ${Data.time} TEXT NULL,
-      ${Data.isActive} BOOLEAN NULL,
-      ${Data.isRepeat} BOOLEAN NULL)
+      $id INTEGER  PRIMARY KEY,
+      $title TEXT NULL,
+      $colorIndex INTEGER NULL,
+      $time TEXT NULL,
+      $isActive TEXT NULL,
+      $isRepeat TEXT NULL)
 ''');
+  }
+
+  // UPGRADE DATABASE TABLES
+  void _onUpgrade(Database db, int oldVersion, int newVersion) {
+    if (oldVersion < newVersion) {
+      db.execute("ALTER TABLE $_table ADD COLUMN newCol TEXT;");
+    }
   }
 
   Future<List<Alarm>> getAll() async {
@@ -64,14 +70,14 @@ class DatabaseInstance {
   Future<int> updateData(
       {required Map<String, dynamic> data, required int alarmID}) async {
     final query = await _database
-        ?.update(_table, data, where: '${Data.id} = ?', whereArgs: [alarmID]);
+        ?.update(_table, data, where: '$id = ?', whereArgs: [alarmID]);
     return query ?? 0;
   }
 
-  Future<int> deleteData({required int alarmID}) async {
-    final query = await _database
-        ?.delete(_table, where: '${Data.id} = ?', whereArgs: [alarmID]);
+  Future<int> deleteData({int? alarmID}) async {
+    final query = await _database?.delete(_table);
 
+    print(query);
     return query ?? 0;
   }
 }

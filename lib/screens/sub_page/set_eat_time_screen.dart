@@ -3,7 +3,6 @@ import 'package:bmi_app/data/data.dart';
 import 'package:bmi_app/data/theme_data.dart';
 import 'package:bmi_app/providers/clock_provider.dart';
 import 'package:bmi_app/widgets/mini/title_widget.dart';
-import 'package:bmi_app/widgets/object/alarm_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bmi_app/screens/sub_page/clock_view.dart';
@@ -112,13 +111,13 @@ class SetEatTimeScreen extends StatelessWidget {
                           style: R.appTextStyle.clockTextStyle
                               .copyWith(fontSize: 15)),
                       const SizedBox(height: 20),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 20),
-                        child: AlarmWidget(
-                          alarm: alarms[0],
-                          gradientColor: gradientColor,
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(right: 20),
+                      //   child: AlarmWidget(
+                      //     alarm: alarms[0],
+                      //     gradientColor: gradientColor,
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -218,13 +217,13 @@ class SetEatTimeScreen extends StatelessWidget {
               Text("Your Upcoming Alarm, let's prepare!",
                   style: R.appTextStyle.clockTextStyle.copyWith(fontSize: 15)),
               const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: AlarmWidget(
-                  alarm: alarms[0],
-                  gradientColor: gradientColor,
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.only(right: 20),
+              //   child: AlarmWidget(
+              //     alarm: alarms[0],
+              //     gradientColor: gradientColor,
+              //   ),
+              // ),
             ],
           ),
         ),

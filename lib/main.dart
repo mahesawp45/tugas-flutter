@@ -7,6 +7,7 @@ import 'package:bmi_app/screens/splash_screen.dart';
 import 'package:bmi_app/styles/theme_styles.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import '/routes/app_pages.dart';
 import 'screens/bmi_result_screen.dart';
@@ -14,24 +15,17 @@ import 'screens/bmi_result_screen.dart';
 import 'screens/bmi_data_screen.dart';
 import 'package:flutter/material.dart';
 
-class ReceivedNotification {
-  ReceivedNotification({
-    required this.id,
-    required this.title,
-    required this.body,
-    required this.payload,
-  });
-
-  final int id;
-  final String? title;
-  final String? body;
-  final String? payload;
-}
-
-String? selectedNotificationPayload;
+const String alarmBox = 'alarm';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // INIT HIVE
+  await Hive.initFlutter();
+
+  // BUAT DB
+  await Hive.openBox(alarmBox);
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -75,6 +69,7 @@ class _MyAppState extends State<MyApp> {
       child: Consumer<DarkThemeProvider>(
           builder: (context, darkThemeProvider, child) {
         return MaterialApp(
+          title: 'BMI APP | ID CAMP',
           debugShowCheckedModeBanner: false,
           initialRoute: Routes.splashScreen,
           routes: {
