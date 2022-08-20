@@ -26,18 +26,12 @@ class AddEatAlarmScreen extends StatefulWidget {
 class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
   List<AlarmHive> alarms = [];
 
-  Box? myalarm;
+  Box? myalarm = Hive.box(alarmBox);
 
   @override
   void initState() {
     super.initState();
-    _initHive();
     _refreshAlarms();
-  }
-
-  _initHive() async {
-    // BUAT DB
-    myalarm = await Hive.openBox(alarmBox);
   }
 
   // Get semua alarm dari DB
@@ -100,7 +94,7 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
         children: [
           SizedBox(height: paddingTop),
           Padding(
-            padding: const EdgeInsets.only(top: 10),
+            padding: const EdgeInsets.only(top: 10, bottom: 10),
             child: TitleWidget(
               title: widget.title.toString(),
             ),

@@ -27,6 +27,9 @@ void main() async {
   // REGISTER si ADAPTER
   Hive.registerAdapter(AlarmHiveAdapter());
 
+  await Hive.openBox(alarmBox);
+
+  await Hive.openBox(alarmBox);
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
