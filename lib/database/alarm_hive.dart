@@ -21,7 +21,7 @@ class AlarmHive extends HiveObject {
 
   @override
   @HiveField(5)
-  String? key;
+  String? stringID;
 
   AlarmHive({
     this.title,
@@ -29,6 +29,6 @@ class AlarmHive extends HiveObject {
     this.isActive,
     this.isRepeat,
     this.gradientColorIndex,
-    this.key,
+    this.stringID,
   });
 }

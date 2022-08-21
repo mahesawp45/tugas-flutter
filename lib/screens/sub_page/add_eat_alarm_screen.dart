@@ -40,6 +40,7 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
       final value = myalarm?.get(key);
 
       return AlarmHive()
+        ..stringID = value.stringID
         ..title = value.title
         ..alarmDateTime = value.alarmDateTime
         ..isActive = value.isActive
@@ -66,20 +67,48 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
   }
 
   // UPDATE alarm
-  _updateAlarm(itemKey, AlarmHive item) async {
-    await myalarm?.put(itemKey, item);
+  _updateAlarm(AlarmHive item) async {
+    // await myalarm?.put(itemKey, item);
+    late AlarmHive data;
+    myalarm?.keys.map((key) {
+      var a = myalarm?.get(key);
+
+      if (a.stringID == item.stringID) {
+        data = a
+          ..stringID = item.stringID
+          ..title = item.title
+          ..alarmDateTime = item.alarmDateTime
+          ..isActive = item.isActive
+          ..isRepeat = item.isRepeat
+          ..gradientColorIndex = item.gradientColorIndex;
+
+        data.save();
+      }
+    }).toList();
+
     _refreshAlarms();
+    Navigator.pop(context);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text(
+          'One Alarm has been edited',
+        ),
+      ),
+    );
   }
 
   // DELETE alarm
-  Future _deleteAlarm(AlarmHive e) async {
+  _deleteAlarm(AlarmHive e) async {
     myalarm?.keys.map((key) {
       var a = myalarm?.get(key);
-      if (a.title == e.title) a.delete();
+      if (a.stringID == e.stringID) a.delete();
     }).toList();
 
-    // await myalarm?.delete(e);
     _refreshAlarms();
+    Navigator.pop(context);
+    Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         behavior: SnackBarBehavior.floating,
@@ -187,12 +216,14 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
 
   _showEditAlarmDialog(
       {required AlarmHive e,
-      required TextEditingController titleC,
-      required List<Color> gradientColor}) {
+      required List<Color> gradientColor,
+      required TextEditingController titleC}) {
     String timeVal =
         "${e.alarmDateTime?.hour.toString() ?? ''} : ${e.alarmDateTime?.minute.toString() ?? ''} ${(e.alarmDateTime?.hour ?? 0) < 12 ? 'AM' : 'PM'}";
     int colorVal = e.gradientColorIndex!;
     bool isRepeat = e.isRepeat!;
+    var stringID = e.stringID ?? 'No Key';
+    DateTime? alarmTime;
 
     showDialog(
       context: context,
@@ -252,6 +283,8 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
                                 now.day,
                                 selectedTime.hour,
                                 selectedTime.minute);
+
+                            alarmTime = selectedDateTime;
                             setDialogState(() {
                               timeVal =
                                   "${DateFormat('HH:mm').format(selectedDateTime)} ${selectedDateTime.hour < 12 ? 'AM' : 'PM'}";
@@ -335,115 +368,18 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
+                        _buildDeleteAlarmButton(context, e),
                         IconButton(
                           onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return Dialog(
-                                  backgroundColor: Colors.transparent,
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      Container(
-                                        margin: const EdgeInsets.only(top: 50),
-                                        padding: const EdgeInsets.only(
-                                          top: 70,
-                                          bottom: 20,
-                                          left: 20,
-                                          right: 20,
-                                        ),
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.3,
-                                        width:
-                                            MediaQuery.of(context).size.height *
-                                                0.9,
-                                        decoration: BoxDecoration(
-                                          color:
-                                              R.appColors.primaryColorLighter,
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                        ),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Center(
-                                              child: Text(
-                                                textAlign: TextAlign.center,
-                                                'Are you sure delete alarm ${e.title}?',
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 20,
-                                                ),
-                                              ),
-                                            ),
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                TextButton(
-                                                  onPressed: () async {
-                                                    await _deleteAlarm(e);
-                                                    Navigator.pop(context);
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: Text(
-                                                    'Yeah, Sure!',
-                                                    style: TextStyle(
-                                                      color: Colors.white
-                                                          .withOpacity(0.7),
-                                                    ),
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 20),
-                                                ElevatedButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    primary: Colors.white,
-                                                  ),
-                                                  child: Text(
-                                                    'Nope!',
-                                                    style: TextStyle(
-                                                        color: R.appColors
-                                                            .primaryColorDarker),
-                                                  ),
-                                                ),
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      Positioned(
-                                        top: -10,
-                                        child: Icon(Icons.warning_rounded,
-                                            size: 100,
-                                            shadows: [
-                                              Shadow(
-                                                color: Colors.red.shade800,
-                                                blurRadius: 50,
-                                                offset: const Offset(0, 0),
-                                              ),
-                                            ]),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            );
+                            var data = e
+                              ..title = titleC.text
+                              ..alarmDateTime = alarmTime
+                              ..isActive = true
+                              ..isRepeat = isRepeat
+                              ..gradientColorIndex = colorVal
+                              ..stringID = stringID;
+                            _updateAlarm(data);
                           },
-                          icon: const Icon(
-                            Icons.delete,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {},
                           icon: const Icon(
                             Icons.check_circle,
                           ),
@@ -457,6 +393,100 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
           },
         );
       },
+    );
+  }
+
+  IconButton _buildDeleteAlarmButton(BuildContext context, AlarmHive e) {
+    return IconButton(
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 50),
+                    padding: const EdgeInsets.only(
+                      top: 70,
+                      bottom: 20,
+                      left: 20,
+                      right: 20,
+                    ),
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    width: MediaQuery.of(context).size.height * 0.9,
+                    decoration: BoxDecoration(
+                      color: R.appColors.primaryColorLighter,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Center(
+                          child: Text(
+                            textAlign: TextAlign.center,
+                            'Are you sure delete alarm ${e.title}?',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
+                          ),
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                _deleteAlarm(e);
+                              },
+                              child: Text(
+                                'Yeah, Sure!',
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.7),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 20),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.white,
+                              ),
+                              child: Text(
+                                'Nope!',
+                                style: TextStyle(
+                                    color: R.appColors.primaryColorDarker),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    top: -10,
+                    child: Icon(Icons.warning_rounded, size: 100, shadows: [
+                      Shadow(
+                        color: Colors.red.shade800,
+                        blurRadius: 50,
+                        offset: const Offset(0, 0),
+                      ),
+                    ]),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+      icon: const Icon(
+        Icons.delete,
+      ),
     );
   }
 
@@ -668,7 +698,7 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
                         ..isActive = true
                         ..isRepeat = isRepeatSelected
                         ..gradientColorIndex = colorVal
-                        ..key = DateTime.now().toString();
+                        ..stringID = DateTime.now().toString();
 
                       if (titleVal == 'Title') {
                         showTitleNullDialog();
