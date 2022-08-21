@@ -75,14 +75,16 @@ class AlarmWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "${data.alarmDateTime?.hour.toString()} : ${data.alarmDateTime?.minute.toString()}",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              data.alarmDateTime == null
+                  ? const Text('data')
+                  : Text(
+                      "${data.alarmDateTime?.hour.toString()} : ${data.alarmDateTime?.minute.toString()} ${data.alarmDateTime!.hour < 12 ? 'AM' : 'PM'}",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
               const Icon(
                 Icons.keyboard_arrow_down,
                 color: Colors.white,

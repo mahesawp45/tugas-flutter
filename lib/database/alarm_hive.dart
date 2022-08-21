@@ -21,7 +21,7 @@ class AlarmHive extends HiveObject {
 
   @override
   @HiveField(5)
-  var key;
+  String? key;
 
   AlarmHive({
     this.title,

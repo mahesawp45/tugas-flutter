@@ -38,6 +38,7 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
   void _refreshAlarms() {
     final data = myalarm?.keys.map((key) {
       final value = myalarm?.get(key);
+
       return AlarmHive()
         ..title = value.title
         ..alarmDateTime = value.alarmDateTime
@@ -71,21 +72,27 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
   }
 
   // DELETE alarm
-  _deleteAlarm(itemKey) async {
-    await myalarm?.delete(itemKey);
+  Future _deleteAlarm(AlarmHive e) async {
+    myalarm?.keys.map((key) {
+      var a = myalarm?.get(key);
+      if (a.title == e.title) a.delete();
+    }).toList();
+
+    // await myalarm?.delete(e);
     _refreshAlarms();
     ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An Alaram has been deleted')));
+      const SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text(
+          'One Alarm has been deleted',
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     var paddingTop = MediaQuery.of(context).padding.top;
-    DateTime? alarmTime;
-    late String alarmTimeString;
-    bool isRepeatSelected = false;
-    String titleVal = 'Title';
-    // var args = ModalRoute.of(context)!.settings.arguments;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -121,62 +128,11 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
                   );
                 } else {
                   return GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            backgroundColor: Colors.transparent,
-                            content: Container(
-                              height: MediaQuery.of(context).size.height * 0.4,
-                              width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                gradient: LinearGradient(colors: gradientColor),
-                                boxShadow: [
-                                  BoxShadow(
-                                    blurRadius: 20,
-                                    color: gradientColor[0],
-                                    spreadRadius: 10,
-                                  ),
-                                ],
-                              ),
-                              child: ListView(
-                                physics: const BouncingScrollPhysics(),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 30,
-                                ),
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 5),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    child: TextField(
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                      controller: titleC,
-                                      cursorColor: Colors.white,
-                                      decoration: const InputDecoration(
-                                        border: InputBorder.none,
-                                        focusColor: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
                     child: AlarmWidget(gradientColor: gradientColor, data: e),
+                    onTap: () {
+                      _showEditAlarmDialog(
+                          e: e, gradientColor: gradientColor, titleC: titleC);
+                    },
                   );
                 }
               }).followedBy([
@@ -197,10 +153,7 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
                       ),
                       child: TextButton(
                         onPressed: () async {
-                          alarmTimeString =
-                              DateFormat('HH:mm').format(DateTime.now());
-                          await _buildAddAlarmPanel(context, alarmTime,
-                              alarmTimeString, isRepeatSelected, titleVal);
+                          await _buildAddAlarmPanel(context);
                         },
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -232,13 +185,314 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
     );
   }
 
-  _buildAddAlarmPanel(BuildContext context, DateTime? alarmTime,
-      String alarmTimeString, bool isRepeatSelected, String titleVal) async {
-    //
-    TextEditingController titleC = TextEditingController();
+  _showEditAlarmDialog(
+      {required AlarmHive e,
+      required TextEditingController titleC,
+      required List<Color> gradientColor}) {
+    String timeVal =
+        "${e.alarmDateTime?.hour.toString() ?? ''} : ${e.alarmDateTime?.minute.toString() ?? ''} ${(e.alarmDateTime?.hour ?? 0) < 12 ? 'AM' : 'PM'}";
+    int colorVal = e.gradientColorIndex!;
+    bool isRepeat = e.isRepeat!;
 
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              backgroundColor: Colors.transparent,
+              content: Container(
+                height: MediaQuery.of(context).size.height * 0.4,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: LinearGradient(colors: gradientColor),
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 20,
+                      color: gradientColor[0],
+                      spreadRadius: 10,
+                    ),
+                  ],
+                ),
+                child: ListView(
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 30,
+                  ),
+                  children: [
+                    _buildTextEditingTitle(titleC),
+
+                    // TIME
+                    ListTile(
+                        title: Text(
+                          'Time ',
+                          style: R.appTextStyle.clockTextStyle,
+                        ),
+                        trailing: Text(
+                          timeVal,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        ),
+                        onTap: () async {
+                          var selectedTime = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.fromDateTime(
+                                e.alarmDateTime ?? DateTime.now()),
+                          );
+
+                          if (selectedTime != null) {
+                            final now = DateTime.now();
+                            var selectedDateTime = DateTime(
+                                now.year,
+                                now.month,
+                                now.day,
+                                selectedTime.hour,
+                                selectedTime.minute);
+                            setDialogState(() {
+                              timeVal =
+                                  "${DateFormat('HH:mm').format(selectedDateTime)} ${selectedDateTime.hour < 12 ? 'AM' : 'PM'}";
+                            });
+                          }
+                        }),
+
+                    // COLOR
+                    ListTile(
+                      title: Text(
+                        'Color',
+                        style: R.appTextStyle.clockTextStyle,
+                      ),
+                      trailing: ColorButton(
+                        colorVal: colorVal,
+                      ),
+                      onTap: () {
+                        List<ListTile> colorList = List.generate(
+                            GradientTemplate.gradientTemplate.length, (index) {
+                          return ListTile(
+                            onTap: () {
+                              setDialogState(() {
+                                colorVal = index;
+                                gradientColor = GradientTemplate
+                                    .gradientTemplate[colorVal].colors;
+                              });
+                              Navigator.pop(context);
+                            },
+                            leading: _buildColorSelector(index),
+                            trailing: Text(
+                              GradientTemplate.colorName[index],
+                              style: const TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          );
+                        }).toList();
+
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              scrollable: true,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              backgroundColor: R.appColors.primaryColorLighter,
+                              title: const Text(
+                                'Choose the Color',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              content: Column(
+                                children: colorList,
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+
+                    ListTile(
+                      title: Text(
+                        'Repeat',
+                        style: R.appTextStyle.clockTextStyle,
+                      ),
+                      trailing: Switch(
+                        value: isRepeat,
+                        trackColor: MaterialStateProperty.all(
+                            Colors.white.withOpacity(0.5)),
+                        thumbColor: MaterialStateProperty.all(Colors.white),
+                        onChanged: (value) {
+                          setDialogState(() {
+                            isRepeat = value;
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return Dialog(
+                                  backgroundColor: Colors.transparent,
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Container(
+                                        margin: const EdgeInsets.only(top: 50),
+                                        padding: const EdgeInsets.only(
+                                          top: 70,
+                                          bottom: 20,
+                                          left: 20,
+                                          right: 20,
+                                        ),
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.3,
+                                        width:
+                                            MediaQuery.of(context).size.height *
+                                                0.9,
+                                        decoration: BoxDecoration(
+                                          color:
+                                              R.appColors.primaryColorLighter,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Center(
+                                              child: Text(
+                                                textAlign: TextAlign.center,
+                                                'Are you sure delete alarm ${e.title}?',
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 20,
+                                                ),
+                                              ),
+                                            ),
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                TextButton(
+                                                  onPressed: () async {
+                                                    await _deleteAlarm(e);
+                                                    Navigator.pop(context);
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text(
+                                                    'Yeah, Sure!',
+                                                    style: TextStyle(
+                                                      color: Colors.white
+                                                          .withOpacity(0.7),
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 20),
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    primary: Colors.white,
+                                                  ),
+                                                  child: Text(
+                                                    'Nope!',
+                                                    style: TextStyle(
+                                                        color: R.appColors
+                                                            .primaryColorDarker),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: -10,
+                                        child: Icon(Icons.warning_rounded,
+                                            size: 100,
+                                            shadows: [
+                                              Shadow(
+                                                color: Colors.red.shade800,
+                                                blurRadius: 50,
+                                                offset: const Offset(0, 0),
+                                              ),
+                                            ]),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          icon: const Icon(
+                            Icons.delete,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.check_circle,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Container _buildTextEditingTitle(TextEditingController titleC) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: Colors.white,
+        ),
+      ),
+      child: TextField(
+        style: const TextStyle(
+          color: Colors.white,
+        ),
+        controller: titleC,
+        cursorColor: Colors.white,
+        decoration: const InputDecoration(
+          border: InputBorder.none,
+          focusColor: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  _buildAddAlarmPanel(BuildContext context) async {
+    //
+    DateTime? alarmTime;
+    String alarmTimeString =
+        "${DateFormat('HH:mm').format(DateTime.now())} ${DateTime.now().hour < 12 ? 'AM' : 'PM'}";
+
+    bool isRepeatSelected = false;
+    String titleVal = 'Title';
+    TextEditingController titleC = TextEditingController();
     int colorVal = 0;
-    bool isActive = false;
 
     showModalBottomSheet(
       backgroundColor: R.appColors.primaryColorLighter,
@@ -493,10 +747,6 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
         ),
       ),
     );
-  }
-
-  Future inputColor(int colorVal) async {
-    return colorVal;
   }
 
   Container _buildTitleAlarmInput(TextEditingController titleC) {

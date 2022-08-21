@@ -22,7 +22,7 @@ class AlarmHiveAdapter extends TypeAdapter<AlarmHive> {
       isActive: fields[2] == null ? true : fields[2] as bool?,
       isRepeat: fields[3] as bool?,
       gradientColorIndex: fields[4] == null ? 0 : fields[4] as int?,
-      key: fields[5] as dynamic,
+      key: fields[5] as String?,
     );
   }
 
