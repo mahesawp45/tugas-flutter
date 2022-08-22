@@ -1,4 +1,5 @@
 import 'package:bmi_app/database/alarm_hive.dart';
+import 'package:bmi_app/providers/alarm_provider.dart';
 import 'package:bmi_app/providers/bmi_calculator_provider.dart';
 import 'package:bmi_app/providers/bmi_provider.dart';
 import 'package:bmi_app/providers/clock_provider.dart';
@@ -69,6 +70,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (context) => BMIProvider()),
         ChangeNotifierProvider(create: (context) => BMICalculatorProvider()),
         ChangeNotifierProvider(create: (context) => DarkThemeProvider()),
+        ChangeNotifierProvider(create: (context) => AlarmProvider()),
       ],
       child: Consumer<DarkThemeProvider>(
           builder: (context, darkThemeProvider, child) {

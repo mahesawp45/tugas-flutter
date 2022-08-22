@@ -34,6 +34,7 @@ class _ReviewUsScreenState extends State<ReviewUsScreen> {
     return Scaffold(
       floatingActionButton: ratings != null && ratings != 0
           ? FloatingActionButton(
+              backgroundColor: Colors.red.shade900,
               onPressed: () {},
               elevation: 15,
               child: const Icon(
@@ -70,6 +71,7 @@ class _ReviewUsScreenState extends State<ReviewUsScreen> {
                             ),
                             const SizedBox(height: 30),
                             RatingBar.builder(
+                              unratedColor: Colors.grey,
                               itemSize: 50,
                               initialRating: 0,
                               itemCount: 5,

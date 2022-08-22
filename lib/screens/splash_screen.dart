@@ -47,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
         width: double.infinity,
         child: Center(
           child: Text(
-            'Tugas IDCAMP 😘 | Flutter',
+            'Tugas | Flutter 💙',
             style: TextStyle(
               fontSize: 10,
               color: Colors.grey,

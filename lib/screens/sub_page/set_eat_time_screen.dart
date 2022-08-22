@@ -1,8 +1,9 @@
 import 'package:bmi_app/R/r.dart';
-import 'package:bmi_app/data/data.dart';
 import 'package:bmi_app/data/theme_data.dart';
+import 'package:bmi_app/providers/alarm_provider.dart';
 import 'package:bmi_app/providers/clock_provider.dart';
 import 'package:bmi_app/widgets/mini/title_widget.dart';
+import 'package:bmi_app/widgets/object/alarm_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bmi_app/screens/sub_page/clock_view.dart';
@@ -20,8 +21,15 @@ class SetEatTimeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AlarmProvider alarmProvider =
+        Provider.of<AlarmProvider>(context, listen: false);
+
+    alarmProvider.refreshAlarms();
+
     ClockProvider clockProvider =
         Provider.of<ClockProvider>(context, listen: false);
+
+
     var timeZone = clockProvider.timeZone;
     var offSetSign = '';
 
@@ -43,8 +51,6 @@ class SetEatTimeScreen extends StatelessWidget {
   }
 
   Row _buildDesktop(double paddingTop, String offSetSign, String timeZone) {
-    var gradientColor = GradientTemplate
-        .gradientTemplate[alarms[0].gradientColorIndex ?? 0].colors;
     return Row(
       children: [
         Expanded(
@@ -111,13 +117,38 @@ class SetEatTimeScreen extends StatelessWidget {
                           style: R.appTextStyle.clockTextStyle
                               .copyWith(fontSize: 15)),
                       const SizedBox(height: 20),
-                      // Padding(
-                      //   padding: const EdgeInsets.only(right: 20),
-                      //   child: AlarmWidget(
-                      //     alarm: alarms[0],
-                      //     gradientColor: gradientColor,
-                      //   ),
-                      // ),
+                      Consumer<AlarmProvider>(
+                          builder: (context, alarmProvider, child) {
+                        var alarm = alarmProvider.alarms[0];
+
+                        var gradientColor = GradientTemplate
+                            .gradientTemplate[alarm.gradientColorIndex ?? 0]
+                            .colors;
+
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 20),
+                          child: AlarmWidget(
+                            data: alarmProvider.alarms[0],
+                            gradientColor: gradientColor,
+                            isActiveSwitch: Switch(
+                              value: alarm.isActive!,
+                              activeColor: Colors.white,
+                              onChanged: (value) {
+                                var data = alarm
+                                  ..title = alarm.title
+                                  ..alarmDateTime = alarm.alarmDateTime
+                                  ..isActive = value
+                                  ..isRepeat = value
+                                  ..gradientColorIndex =
+                                      alarm.gradientColorIndex
+                                  ..stringID = alarm.stringID;
+                                alarmProvider.updateAlarm(data);
+                              },
+                            ),
+                            isActive: alarm.isActive,
+                          ),
+                        );
+                      }),
                     ],
                   ),
                 ),
@@ -146,9 +177,6 @@ class SetEatTimeScreen extends StatelessWidget {
   }
 
   Column _buildMobile(double paddingTop, String offSetSign, String timeZone) {
-    var gradientColor = GradientTemplate
-        .gradientTemplate[alarms[0].gradientColorIndex ?? 0].colors;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -217,13 +245,35 @@ class SetEatTimeScreen extends StatelessWidget {
               Text("Your Upcoming Alarm, let's prepare!",
                   style: R.appTextStyle.clockTextStyle.copyWith(fontSize: 15)),
               const SizedBox(height: 20),
-              // Padding(
-              //   padding: const EdgeInsets.only(right: 20),
-              //   child: AlarmWidget(
-              //     alarm: alarms[0],
-              //     gradientColor: gradientColor,
-              //   ),
-              // ),
+              Consumer<AlarmProvider>(builder: (context, alarmProvider, child) {
+                var alarm = alarmProvider.alarms[0];
+
+                var gradientColor = GradientTemplate
+                    .gradientTemplate[alarm.gradientColorIndex ?? 0].colors;
+
+                return Padding(
+                  padding: const EdgeInsets.only(right: 20),
+                  child: AlarmWidget(
+                    data: alarmProvider.alarms[0],
+                    gradientColor: gradientColor,
+                    isActiveSwitch: Switch(
+                      value: alarm.isActive!,
+                      activeColor: Colors.white,
+                      onChanged: (value) {
+                        var data = alarm
+                          ..title = alarm.title
+                          ..alarmDateTime = alarm.alarmDateTime
+                          ..isActive = value
+                          ..isRepeat = value
+                          ..gradientColorIndex = alarm.gradientColorIndex
+                          ..stringID = alarm.stringID;
+                        alarmProvider.updateAlarm(data);
+                      },
+                    ),
+                    isActive: alarm.isActive,
+                  ),
+                );
+              }),
             ],
           ),
         ),

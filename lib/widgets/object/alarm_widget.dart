@@ -1,25 +1,41 @@
-import 'package:bmi_app/database/alarm_hive.dart';
 import 'package:flutter/material.dart';
+
+import 'package:bmi_app/database/alarm_hive.dart';
+import 'package:intl/intl.dart';
 
 class AlarmWidget extends StatelessWidget {
   const AlarmWidget({
     Key? key,
     required this.data,
     required this.gradientColor,
+    required this.isActiveSwitch,
+    required this.isActive,
   }) : super(key: key);
 
   final AlarmHive data;
   final List<Color> gradientColor;
+  final Widget isActiveSwitch;
+  final bool? isActive;
 
   @override
   Widget build(BuildContext context) {
+    var day = data.alarmDateTime!;
+
+    DateFormat formatter = DateFormat('EEE');
+    String repeatDay = "${formatter.format(day)}-${formatter.format(day)}";
+
     return Container(
       margin: const EdgeInsets.only(bottom: 32),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         gradient: LinearGradient(
-          colors: gradientColor,
+          colors: isActive!
+              ? gradientColor
+              : [
+                  Colors.grey.shade500,
+                  Colors.white,
+                ],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ),
@@ -27,7 +43,7 @@ class AlarmWidget extends StatelessWidget {
           BoxShadow(
             blurRadius: 10,
             spreadRadius: 5,
-            color: gradientColor[0],
+            color: isActive! ? gradientColor[0] : Colors.transparent,
             offset: const Offset(0, 0),
           ),
         ],
@@ -57,16 +73,12 @@ class AlarmWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              Switch(
-                value: true,
-                activeColor: Colors.white,
-                onChanged: (value) {},
-              ),
+              isActiveSwitch,
             ],
           ),
-          const Text(
-            'Mon-Fri',
-            style: TextStyle(
+          Text(
+            data.isRepeat! ? repeatDay : '',
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 15,
             ),

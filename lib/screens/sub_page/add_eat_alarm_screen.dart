@@ -1,13 +1,13 @@
 import 'package:bmi_app/R/r.dart';
 import 'package:bmi_app/database/alarm_hive.dart';
-import 'package:bmi_app/main.dart';
+import 'package:bmi_app/providers/alarm_provider.dart';
 import 'package:bmi_app/widgets/mini/title_widget.dart';
 import 'package:bmi_app/widgets/object/alarm_widget.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/adapters.dart';
 import 'package:intl/intl.dart';
 import 'package:bmi_app/data/theme_data.dart';
+import 'package:provider/provider.dart';
 
 class AddEatAlarmScreen extends StatefulWidget {
   const AddEatAlarmScreen({
@@ -24,200 +24,158 @@ class AddEatAlarmScreen extends StatefulWidget {
 }
 
 class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
-  List<AlarmHive> alarms = [];
-
-  Box? myalarm = Hive.box(alarmBox);
+  AlarmProvider? alarmProvider;
 
   @override
   void initState() {
     super.initState();
-    _refreshAlarms();
-  }
-
-  // Get semua alarm dari DB
-  void _refreshAlarms() {
-    final data = myalarm?.keys.map((key) {
-      final value = myalarm?.get(key);
-
-      return AlarmHive()
-        ..stringID = value.stringID
-        ..title = value.title
-        ..alarmDateTime = value.alarmDateTime
-        ..isActive = value.isActive
-        ..isRepeat = value.isRepeat
-        ..gradientColorIndex = value.gradientColorIndex;
-    }).toList();
-
-    setState(() {
-      alarms = data?.reversed.toList() ?? [];
-    });
-  }
-
-  // CREATE alarm
-  _createAlarm(AlarmHive newAlarm) async {
-    await myalarm!.add(newAlarm);
-
-    _refreshAlarms();
-  }
-
-  // SHOW 1 alarm
-  Map<String, dynamic> _readAlarm(key) {
-    final alarm = myalarm?.get(key);
-    return alarm;
-  }
-
-  // UPDATE alarm
-  _updateAlarm(AlarmHive item) async {
-    // await myalarm?.put(itemKey, item);
-    late AlarmHive data;
-    myalarm?.keys.map((key) {
-      var a = myalarm?.get(key);
-
-      if (a.stringID == item.stringID) {
-        data = a
-          ..stringID = item.stringID
-          ..title = item.title
-          ..alarmDateTime = item.alarmDateTime
-          ..isActive = item.isActive
-          ..isRepeat = item.isRepeat
-          ..gradientColorIndex = item.gradientColorIndex;
-
-        data.save();
-      }
-    }).toList();
-
-    _refreshAlarms();
-    Navigator.pop(context);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(
-          'One Alarm has been edited',
-        ),
-      ),
-    );
-  }
-
-  // DELETE alarm
-  _deleteAlarm(AlarmHive e) async {
-    myalarm?.keys.map((key) {
-      var a = myalarm?.get(key);
-      if (a.stringID == e.stringID) a.delete();
-    }).toList();
-
-    _refreshAlarms();
-    Navigator.pop(context);
-    Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(
-          'One Alarm has been deleted',
-        ),
-      ),
-    );
+    alarmProvider = Provider.of<AlarmProvider>(context, listen: false);
+    alarmProvider?.refreshAlarms();
   }
 
   @override
   Widget build(BuildContext context) {
     var paddingTop = MediaQuery.of(context).padding.top;
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: paddingTop),
-          Padding(
-            padding: const EdgeInsets.only(top: 10, bottom: 10),
-            child: TitleWidget(
-              title: widget.title.toString(),
-            ),
-          ),
-          Expanded(
-            child: ListView(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.all(20),
-              shrinkWrap: true,
-              children: alarms.map<Widget>((e) {
-                var gradientColor = GradientTemplate
-                    .gradientTemplate[e.gradientColorIndex ?? 0].colors;
+    return Consumer<AlarmProvider>(builder: (context, alarmProvider, child) {
+      return Scaffold(
+        floatingActionButton: alarmProvider.alarms.length < 6
+            ? Container()
+            : FloatingActionButton(
+                backgroundColor: Colors.red.shade900,
+                child: const Icon(Icons.add_alarm),
+                onPressed: () {},
+              ),
+        body: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: paddingTop),
+              Padding(
+                padding: const EdgeInsets.only(top: 10, bottom: 10),
+                child: TitleWidget(
+                  title: widget.title.toString(),
+                ),
+              ),
+              Expanded(
+                child: Consumer<AlarmProvider>(
+                    builder: (context, alarmProvider, child) {
+                  return ListView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.all(20),
+                    shrinkWrap: true,
+                    children: alarmProvider.alarms.map<Widget>((e) {
+                      var gradientColor = GradientTemplate
+                          .gradientTemplate[e.gradientColorIndex ?? 0].colors;
 
-                TextEditingController titleC = TextEditingController();
+                      TextEditingController titleC = TextEditingController();
 
-                titleC.text = e.title!;
+                      titleC.text = e.title!;
 
-                if (alarms.isEmpty) {
-                  return const Text(
-                    'NO ALARM',
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  );
-                } else {
-                  return GestureDetector(
-                    child: AlarmWidget(gradientColor: gradientColor, data: e),
-                    onTap: () {
-                      _showEditAlarmDialog(
-                          e: e, gradientColor: gradientColor, titleC: titleC);
-                    },
-                  );
-                }
-              }).followedBy([
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 50),
-                  child: DottedBorder(
-                    strokeWidth: 2,
-                    dashPattern: const [5, 4],
-                    borderType: BorderType.RRect,
-                    radius: const Radius.circular(24),
-                    color: Colors.white.withOpacity(0.5),
-                    child: Container(
-                      height: 120,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        color: Colors.indigo.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      child: TextButton(
-                        onPressed: () async {
-                          await _buildAddAlarmPanel(context);
-                        },
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.alarm_add,
-                              size: 50,
-                              color: Colors.white.withOpacity(0.5),
+                      if (alarmProvider.alarms.isEmpty) {
+                        return const Text(
+                          'NO ALARM',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        );
+                      } else {
+                        return GestureDetector(
+                          child: AlarmWidget(
+                            gradientColor: gradientColor,
+                            isActive: e.isActive,
+                            data: e,
+                            isActiveSwitch: Switch(
+                              value: e.isActive!,
+                              activeColor: Colors.white,
+                              onChanged: (value) {
+                                var data = e
+                                  ..title = e.title
+                                  ..alarmDateTime = e.alarmDateTime
+                                  ..isActive = value
+                                  ..isRepeat = value
+                                  ..gradientColorIndex = e.gradientColorIndex
+                                  ..stringID = e.stringID;
+                                alarmProvider.updateAlarm(data);
+                              },
                             ),
-                            const SizedBox(height: 10),
-                            Text(
-                              'Add Alarm',
-                              style: TextStyle(
-                                fontSize: 20,
+                          ),
+                          onTap: () {
+                            (e.isActive!)
+                                ? _showEditAlarmDialog(
+                                    e: e,
+                                    gradientColor: gradientColor,
+                                    titleC: titleC,
+                                    alarmProvider: alarmProvider,
+                                  )
+                                : null;
+                          },
+                        );
+                      }
+                    }).followedBy([
+                      alarmProvider.alarms.length > 5
+                          ? Container()
+                          : Padding(
+                              padding: const EdgeInsets.only(bottom: 50),
+                              child: DottedBorder(
+                                strokeWidth: 2,
+                                dashPattern: const [5, 4],
+                                borderType: BorderType.RRect,
+                                radius: const Radius.circular(24),
                                 color: Colors.white.withOpacity(0.5),
+                                child: Container(
+                                  height: 120,
+                                  width: MediaQuery.of(context).size.width,
+                                  decoration: BoxDecoration(
+                                    color: Colors.indigo.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(24),
+                                  ),
+                                  child: TextButton(
+                                    onPressed: () async {
+                                      await _buildAddAlarmPanel(
+                                          context, alarmProvider);
+                                    },
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.alarm_add,
+                                          size: 50,
+                                          color: Colors.white.withOpacity(0.5),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Text(
+                                          'Add Alarm',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            color:
+                                                Colors.white.withOpacity(0.5),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ]).toList(),
-            ),
-          )
-        ],
-      ),
-    );
+                    ]).toList(),
+                  );
+                }),
+              )
+            ],
+          ),
+        ),
+      );
+    });
   }
 
   _showEditAlarmDialog(
       {required AlarmHive e,
       required List<Color> gradientColor,
-      required TextEditingController titleC}) {
+      required TextEditingController titleC,
+      required AlarmProvider alarmProvider}) {
     String timeVal =
         "${e.alarmDateTime?.hour.toString() ?? ''} : ${e.alarmDateTime?.minute.toString() ?? ''} ${(e.alarmDateTime?.hour ?? 0) < 12 ? 'AM' : 'PM'}";
     int colorVal = e.gradientColorIndex!;
@@ -354,9 +312,7 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
                       ),
                       trailing: Switch(
                         value: isRepeat,
-                        trackColor: MaterialStateProperty.all(
-                            Colors.white.withOpacity(0.5)),
-                        thumbColor: MaterialStateProperty.all(Colors.white),
+                        activeColor: Colors.white,
                         onChanged: (value) {
                           setDialogState(() {
                             isRepeat = value;
@@ -368,17 +324,27 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        _buildDeleteAlarmButton(context, e),
+                        _buildDeleteAlarmButton(context, e, alarmProvider),
                         IconButton(
                           onPressed: () {
                             var data = e
                               ..title = titleC.text
-                              ..alarmDateTime = alarmTime
+                              ..alarmDateTime = alarmTime ?? e.alarmDateTime
                               ..isActive = true
                               ..isRepeat = isRepeat
                               ..gradientColorIndex = colorVal
                               ..stringID = stringID;
-                            _updateAlarm(data);
+                            alarmProvider.updateAlarm(data);
+                            Navigator.pop(context);
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                behavior: SnackBarBehavior.floating,
+                                content: Text(
+                                  'One Alarm has been edited',
+                                ),
+                              ),
+                            );
                           },
                           icon: const Icon(
                             Icons.check_circle,
@@ -396,7 +362,8 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
     );
   }
 
-  IconButton _buildDeleteAlarmButton(BuildContext context, AlarmHive e) {
+  IconButton _buildDeleteAlarmButton(
+      BuildContext context, AlarmHive e, AlarmProvider alarmProvider) {
     return IconButton(
       onPressed: () {
         showDialog(
@@ -415,7 +382,7 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
                       left: 20,
                       right: 20,
                     ),
-                    height: MediaQuery.of(context).size.height * 0.3,
+                    height: MediaQuery.of(context).size.height * 0.25,
                     width: MediaQuery.of(context).size.height * 0.9,
                     decoration: BoxDecoration(
                       color: R.appColors.primaryColorLighter,
@@ -425,12 +392,14 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Center(
-                          child: Text(
-                            textAlign: TextAlign.center,
-                            'Are you sure delete alarm ${e.title}?',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
+                          child: FittedBox(
+                            child: Text(
+                              textAlign: TextAlign.center,
+                              'Are you sure delete alarm ${e.title}?',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
                             ),
                           ),
                         ),
@@ -440,7 +409,7 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
                           children: [
                             TextButton(
                               onPressed: () {
-                                _deleteAlarm(e);
+                                alarmProvider.deleteAlarm(e, context);
                               },
                               child: Text(
                                 'Yeah, Sure!',
@@ -513,7 +482,7 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
     );
   }
 
-  _buildAddAlarmPanel(BuildContext context) async {
+  _buildAddAlarmPanel(BuildContext context, AlarmProvider alarmProvider) async {
     //
     DateTime? alarmTime;
     String alarmTimeString =
@@ -694,7 +663,7 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
                     onPressed: () async {
                       var data = AlarmHive()
                         ..title = titleVal
-                        ..alarmDateTime = alarmTime
+                        ..alarmDateTime = alarmTime ?? DateTime.now()
                         ..isActive = true
                         ..isRepeat = isRepeatSelected
                         ..gradientColorIndex = colorVal
@@ -703,7 +672,7 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
                       if (titleVal == 'Title') {
                         showTitleNullDialog();
                       } else {
-                        _createAlarm(data);
+                        alarmProvider.createAlarm(data);
 
                         Navigator.pop(context);
                       }
