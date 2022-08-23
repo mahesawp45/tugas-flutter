@@ -46,127 +46,135 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
                 child: const Icon(Icons.add_alarm),
                 onPressed: () {},
               ),
-        body: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: paddingTop),
-              Padding(
-                padding: const EdgeInsets.only(top: 10, bottom: 10),
-                child: TitleWidget(
-                  title: widget.title.toString(),
+        body: LayoutBuilder(builder: (context, constraint) {
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: paddingTop),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10, bottom: 10),
+                  child: TitleWidget(
+                    title: widget.title.toString(),
+                  ),
                 ),
-              ),
-              Expanded(
-                child: Consumer<AlarmProvider>(
-                    builder: (context, alarmProvider, child) {
-                  return ListView(
-                    physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.all(20),
-                    shrinkWrap: true,
-                    children: alarmProvider.alarms.map<Widget>((e) {
-                      var gradientColor = GradientTemplate
-                          .gradientTemplate[e.gradientColorIndex ?? 0].colors;
-
-                      TextEditingController titleC = TextEditingController();
-
-                      titleC.text = e.title!;
-
-                      if (alarmProvider.alarms.isEmpty) {
-                        return const Text(
-                          'NO ALARM',
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        );
-                      } else {
-                        return GestureDetector(
-                          child: AlarmWidget(
-                            gradientColor: gradientColor,
-                            isActive: e.isActive,
-                            data: e,
-                            isActiveSwitch: Switch(
-                              value: e.isActive!,
-                              activeColor: Colors.white,
-                              onChanged: (value) {
-                                var data = e
-                                  ..title = e.title
-                                  ..alarmDateTime = e.alarmDateTime
-                                  ..isActive = value
-                                  ..isRepeat = value
-                                  ..gradientColorIndex = e.gradientColorIndex
-                                  ..stringID = e.stringID;
-                                alarmProvider.updateAlarm(data);
-                              },
+                Expanded(
+                  child: Consumer<AlarmProvider>(
+                      builder: (context, alarmProvider, child) {
+                    return ListView(
+                      physics: const BouncingScrollPhysics(),
+                      padding: constraint.maxWidth < 992
+                          ? const EdgeInsets.all(20)
+                          : const EdgeInsets.symmetric(
+                              vertical: 20,
+                              horizontal: 300,
                             ),
-                          ),
-                          onTap: () {
-                            (e.isActive!)
-                                ? _showEditAlarmDialog(
-                                    e: e,
-                                    gradientColor: gradientColor,
-                                    titleC: titleC,
-                                    alarmProvider: alarmProvider,
-                                  )
-                                : null;
-                          },
-                        );
-                      }
-                    }).followedBy([
-                      alarmProvider.alarms.length > 5
-                          ? Container()
-                          : Padding(
-                              padding: const EdgeInsets.only(bottom: 50),
-                              child: DottedBorder(
-                                strokeWidth: 2,
-                                dashPattern: const [5, 4],
-                                borderType: BorderType.RRect,
-                                radius: const Radius.circular(24),
-                                color: Colors.white.withOpacity(0.5),
-                                child: Container(
-                                  height: 120,
-                                  width: MediaQuery.of(context).size.width,
-                                  decoration: BoxDecoration(
-                                    color: Colors.indigo.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(24),
-                                  ),
-                                  child: TextButton(
-                                    onPressed: () async {
-                                      await _buildAddAlarmPanel(
-                                          context, alarmProvider);
-                                    },
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.alarm_add,
-                                          size: 50,
-                                          color: Colors.white.withOpacity(0.5),
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Text(
-                                          'Add Alarm',
-                                          style: TextStyle(
-                                            fontSize: 20,
+                      shrinkWrap: true,
+                      children: alarmProvider.alarms.map<Widget>((e) {
+                        var gradientColor = GradientTemplate
+                            .gradientTemplate[e.gradientColorIndex ?? 0].colors;
+
+                        TextEditingController titleC = TextEditingController();
+
+                        titleC.text = e.title!;
+
+                        if (alarmProvider.alarms.isEmpty) {
+                          return const Text(
+                            'NO ALARM',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          );
+                        } else {
+                          return GestureDetector(
+                            child: AlarmWidget(
+                              gradientColor: gradientColor,
+                              isActive: e.isActive,
+                              data: e,
+                              isActiveSwitch: Switch(
+                                value: e.isActive!,
+                                activeColor: Colors.white,
+                                onChanged: (value) {
+                                  var data = e
+                                    ..title = e.title
+                                    ..alarmDateTime = e.alarmDateTime
+                                    ..isActive = value
+                                    ..isRepeat = value
+                                    ..gradientColorIndex = e.gradientColorIndex
+                                    ..stringID = e.stringID;
+                                  alarmProvider.updateAlarm(data);
+                                },
+                              ),
+                            ),
+                            onTap: () {
+                              (e.isActive!)
+                                  ? _showEditAlarmDialog(
+                                      e: e,
+                                      gradientColor: gradientColor,
+                                      titleC: titleC,
+                                      alarmProvider: alarmProvider,
+                                    )
+                                  : null;
+                            },
+                          );
+                        }
+                      }).followedBy([
+                        alarmProvider.alarms.length > 5
+                            ? Container()
+                            : Padding(
+                                padding: const EdgeInsets.only(bottom: 50),
+                                child: DottedBorder(
+                                  strokeWidth: 2,
+                                  dashPattern: const [5, 4],
+                                  borderType: BorderType.RRect,
+                                  radius: const Radius.circular(24),
+                                  color: Colors.white.withOpacity(0.5),
+                                  child: Container(
+                                    height: 120,
+                                    width: MediaQuery.of(context).size.width,
+                                    decoration: BoxDecoration(
+                                      color: Colors.indigo.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(24),
+                                    ),
+                                    child: TextButton(
+                                      onPressed: () async {
+                                        await _buildAddAlarmPanel(
+                                            context, alarmProvider);
+                                      },
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.alarm_add,
+                                            size: 50,
                                             color:
                                                 Colors.white.withOpacity(0.5),
                                           ),
-                                        ),
-                                      ],
+                                          const SizedBox(height: 10),
+                                          Text(
+                                            'Add Alarm',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              color:
+                                                  Colors.white.withOpacity(0.5),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                    ]).toList(),
-                  );
-                }),
-              )
-            ],
-          ),
-        ),
+                      ]).toList(),
+                    );
+                  }),
+                )
+              ],
+            ),
+          );
+        }),
       );
     });
   }
@@ -177,7 +185,7 @@ class _AddEatAlarmScreenState extends State<AddEatAlarmScreen> {
       required TextEditingController titleC,
       required AlarmProvider alarmProvider}) {
     String timeVal =
-        "${e.alarmDateTime?.hour.toString() ?? ''} : ${e.alarmDateTime?.minute.toString() ?? ''} ${(e.alarmDateTime?.hour ?? 0) < 12 ? 'AM' : 'PM'}";
+        "${e.alarmDateTime?.hour.toString() ?? ''} : ${e.alarmDateTime!.minute > 0 ? e.alarmDateTime?.minute.toString() : '00'} ${(e.alarmDateTime?.hour ?? 0) < 12 ? 'AM' : 'PM'}";
     int colorVal = e.gradientColorIndex!;
     bool isRepeat = e.isRepeat!;
     var stringID = e.stringID ?? 'No Key';

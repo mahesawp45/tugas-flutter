@@ -1,5 +1,5 @@
 name: bmi_app
-description: A new Flutter project.
+description: BMI CALCULATOR Sederhana
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -31,6 +31,7 @@ dependencies:
   dotted_border: ^2.0.0+2
   flutter:
     sdk: flutter
+  flutter_local_notifications: ^9.8.0+1
   flutter_rating_bar: ^4.0.1
   flutter_share: ^2.0.0
   hive: ^2.2.3
@@ -38,8 +39,6 @@ dependencies:
   intl: ^0.17.0
   path_provider: ^2.0.11
   provider: ^6.0.3
-  shared_preferences: ^2.0.15
-  sqflite: ^2.0.3+1
 
 dev_dependencies:
   build_runner: ^2.2.0

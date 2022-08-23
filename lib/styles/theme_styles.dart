@@ -12,8 +12,7 @@ class Styles {
       drawerTheme: DrawerThemeData(
         backgroundColor: isDarkTheme ? R.appColors.primaryColor : Colors.white,
       ),
-      iconTheme: IconThemeData(
-          color: isDarkTheme ? Colors.white : R.appColors.primaryColor),
+      iconTheme: const IconThemeData(color: Colors.white),
       colorScheme:
           ColorScheme.fromSwatch().copyWith(secondary: Colors.transparent),
       scaffoldBackgroundColor: isDarkTheme

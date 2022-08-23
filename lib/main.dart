@@ -1,15 +1,20 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:bmi_app/database/alarm_hive.dart';
 import 'package:bmi_app/providers/alarm_provider.dart';
 import 'package:bmi_app/providers/bmi_calculator_provider.dart';
 import 'package:bmi_app/providers/bmi_provider.dart';
 import 'package:bmi_app/providers/clock_provider.dart';
-import 'package:bmi_app/providers/dark_theme_provider.dart';
+import 'package:bmi_app/providers/dark_mode_provider.dart';
 import 'package:bmi_app/screens/loading_screen.dart';
 import 'package:bmi_app/screens/splash_screen.dart';
 import 'package:bmi_app/styles/theme_styles.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '/routes/app_pages.dart';
 import 'screens/bmi_result_screen.dart';
@@ -17,20 +22,48 @@ import 'screens/bmi_result_screen.dart';
 import 'screens/bmi_data_screen.dart';
 import 'package:flutter/material.dart';
 
+// Nama DB
 const String alarmBox = 'alarmhive';
+const String darkModeBox = 'darkMode';
+
+// LOCAL Notif
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  Directory appDocDir = await getApplicationDocumentsDirectory();
+  String appDocPath = appDocDir.path;
+
+  log(appDocPath);
+
   // INIT HIVE
-  await Hive.initFlutter();
+  await Hive.initFlutter(appDocPath);
 
   // REGISTER si ADAPTER
   Hive.registerAdapter(AlarmHiveAdapter());
 
   await Hive.openBox(alarmBox);
+  await Hive.openBox(darkModeBox);
 
-  await Hive.openBox(alarmBox);
+  var initializationSettingsAndroid =
+      const AndroidInitializationSettings('ic_launcher');
+  var initializationSettingsIOS = IOSInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+      onDidReceiveLocalNotification:
+          (int id, String? title, String? body, String? payload) async {});
+  var initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: (String? payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: $payload');
+    }
+  });
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -49,17 +82,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  DarkThemeProvider themeChangeProvider = DarkThemeProvider();
+  DarkModeProvider? darkModeProvider;
 
   @override
   void initState() {
     super.initState();
-    getCurrentAppTheme().then((value) => themeChangeProvider.darkTheme = value);
-  }
-
-  Future<bool> getCurrentAppTheme() async {
-    var dark = await themeChangeProvider.darkThemePreference.getTheme();
-    return themeChangeProvider.darkTheme = dark;
+    darkModeProvider = Provider.of(context, listen: false);
+    darkModeProvider?.getDarkMode() ?? true;
   }
 
   @override
@@ -69,11 +98,11 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (context) => ClockProvider()),
         ChangeNotifierProvider(create: (context) => BMIProvider()),
         ChangeNotifierProvider(create: (context) => BMICalculatorProvider()),
-        ChangeNotifierProvider(create: (context) => DarkThemeProvider()),
+        ChangeNotifierProvider(create: (context) => DarkModeProvider()),
         ChangeNotifierProvider(create: (context) => AlarmProvider()),
       ],
-      child: Consumer<DarkThemeProvider>(
-          builder: (context, darkThemeProvider, child) {
+      child: Consumer<DarkModeProvider>(
+          builder: (context, darkModeProvider, child) {
         return MaterialApp(
           title: 'BMI APP | ID CAMP',
           debugShowCheckedModeBanner: false,
@@ -84,7 +113,8 @@ class _MyAppState extends State<MyApp> {
             Routes.bmiResultScreen: (context) => const BMIResultScreen(),
             Routes.loadingScreen: (context) => const LoadingScreen(),
           },
-          theme: Styles.themeData(darkThemeProvider.darkTheme, context),
+          theme:
+              Styles.themeData(darkModeProvider.getDarkMode() ?? true, context),
         );
       }),
     );

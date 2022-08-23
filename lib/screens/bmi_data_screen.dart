@@ -3,7 +3,7 @@ import 'package:bmi_app/R/r.dart';
 import 'package:bmi_app/providers/bmi_calculator_provider.dart';
 import 'package:bmi_app/providers/bmi_provider.dart';
 import 'package:bmi_app/providers/clock_provider.dart';
-import 'package:bmi_app/providers/dark_theme_provider.dart';
+import 'package:bmi_app/providers/dark_mode_provider.dart';
 import 'package:bmi_app/screens/sub_page/add_eat_alarm_screen.dart';
 import 'package:bmi_app/screens/sub_page/challenge_screen.dart';
 import 'package:bmi_app/screens/sub_page/review_us_screen.dart';
@@ -34,7 +34,8 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
   int? height;
   int? weight;
   int? age;
-  DarkThemeProvider? themeChange;
+  // DarkThemeProvider? themeChange;
+  DarkModeProvider? darkModeProvider;
 
   final PageController _pageController = PageController();
   String? title;
@@ -56,7 +57,10 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
     height = bmiProvider?.getHeightBMI;
     weight = bmiProvider?.getWeightBMI;
     age = bmiProvider?.getAgeBMI;
-    themeChange = Provider.of<DarkThemeProvider>(context, listen: false);
+    darkModeProvider = Provider.of(context, listen: false);
+    darkModeProvider?.getDarkMode;
+    // themeChange = Provider.of<DarkThemeProvider>(context, listen: false);
+
     super.initState();
   }
 
@@ -222,15 +226,15 @@ class _BMIDataScreenState extends State<BMIDataScreen> {
                     await share();
                   },
                 ),
-                Consumer<DarkThemeProvider>(
+                Consumer<DarkModeProvider>(
                     builder: (context, darkThemeProvider, child) {
                   return CupertinoSwitch(
                     activeColor: Colors.white,
                     trackColor: Colors.white,
                     thumbColor: Colors.red,
-                    value: darkThemeProvider.darkTheme,
+                    value: darkModeProvider?.getDarkMode() ?? true,
                     onChanged: (value) {
-                      darkThemeProvider.darkTheme = value;
+                      darkModeProvider?.setDarkMode(value);
                     },
                   );
                 }),

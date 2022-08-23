@@ -90,7 +90,7 @@ class AlarmWidget extends StatelessWidget {
               data.alarmDateTime == null
                   ? const Text('data')
                   : Text(
-                      "${data.alarmDateTime?.hour.toString()} : ${data.alarmDateTime?.minute.toString()} ${data.alarmDateTime!.hour < 12 ? 'AM' : 'PM'}",
+                      "${data.alarmDateTime?.hour.toString()} : ${data.alarmDateTime!.minute > 0 ? data.alarmDateTime?.minute.toString() : '00'} ${data.alarmDateTime!.hour < 12 ? 'AM' : 'PM'}",
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,

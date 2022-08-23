@@ -1,7 +1,9 @@
 import 'package:bmi_app/database/alarm_hive.dart';
 import 'package:bmi_app/main.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class AlarmProvider extends ChangeNotifier {
   List<AlarmHive> alarms = [];
@@ -31,6 +33,12 @@ class AlarmProvider extends ChangeNotifier {
     await myalarm!.add(newAlarm);
 
     refreshAlarms();
+    scheduleAlarm(
+      newAlarm.alarmDateTime ?? DateTime.now(),
+      newAlarm,
+      isRepeating: newAlarm.isRepeat ?? true,
+      isActive: newAlarm.isActive ?? true,
+    );
     notifyListeners();
   }
 
@@ -60,6 +68,12 @@ class AlarmProvider extends ChangeNotifier {
       }
     }).toList();
 
+    scheduleAlarm(
+      item.alarmDateTime ?? DateTime.now(),
+      item,
+      isRepeating: item.isRepeat ?? true,
+      isActive: item.isActive ?? true,
+    );
     notifyListeners();
   }
 
@@ -82,5 +96,66 @@ class AlarmProvider extends ChangeNotifier {
         ),
       ),
     );
+  }
+
+  void scheduleAlarm(
+      DateTime scheduledNotificationDateTime, AlarmHive alarmHive,
+      {required bool isRepeating, required bool isActive}) async {
+    var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
+      'alarm_notif',
+      'alarm_notif',
+      channelDescription: 'Channel for Alarm notification',
+      icon: 'ic_launcher',
+      sound: RawResourceAndroidNotificationSound('a_long_cold_sting'),
+      largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
+    );
+
+    var iOSPlatformChannelSpecifics = const IOSNotificationDetails(
+      sound: 'a_long_cold_sting.wav',
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+    var platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+      iOS: iOSPlatformChannelSpecifics,
+    );
+
+    if (isRepeating && isActive) {
+      // await flutterLocalNotificationsPlugin.show(
+      //   alarmHive.key,
+      //   alarmHive.title,
+      //   'This Time to ${alarmHive.title}💙',
+      //   NotificationDetails(
+      //     android: androidPlatformChannelSpecifics,
+      //     iOS: iOSPlatformChannelSpecifics,
+      //   ),
+      // );
+
+      await flutterLocalNotificationsPlugin.showDailyAtTime(
+        0,
+        alarmHive.title,
+        'This Time to ${alarmHive.title}💙',
+        Time(
+          scheduledNotificationDateTime.hour,
+          scheduledNotificationDateTime.minute,
+          scheduledNotificationDateTime.second,
+        ),
+        platformChannelSpecifics,
+      );
+    } else if (isActive == false) {
+      null;
+    } else {
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        alarmHive.title,
+        alarmHive.title,
+        tz.TZDateTime.from(scheduledNotificationDateTime, tz.local),
+        platformChannelSpecifics,
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+      );
+    }
   }
 }
