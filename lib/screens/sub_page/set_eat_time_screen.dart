@@ -304,7 +304,12 @@ class SetEatTimeScreen extends StatelessWidget {
                   List<Color>? gradientColor;
 
                   if (alarmProvider.alarms.isNotEmpty) {
-                    alarm = alarmProvider.alarms[0];
+                    alarm = alarmProvider.alarms.firstWhere(
+                      (element) =>
+                          element.alarmDateTime!.hour >= DateTime.now().hour ||
+                          element.alarmDateTime!.minute > DateTime.now().minute,
+                    );
+
                     gradientColor = GradientTemplate
                         .gradientTemplate[alarm.gradientColorIndex ?? 0].colors;
                   }
@@ -316,10 +321,10 @@ class SetEatTimeScreen extends StatelessWidget {
                             children: [
                               Text("Your Upcoming Alarm, let's prepare!",
                                   style: R.appTextStyle.clockTextStyle
-                                      .copyWith(fontSize: 15)),
+                                      .copyWith(fontSize: 12)),
                               const SizedBox(height: 20),
                               AlarmWidget(
-                                data: alarmProvider.alarms[0],
+                                data: alarm,
                                 gradientColor: gradientColor ?? [],
                                 isActiveSwitch: Switch(
                                   value: alarm.isActive ?? false,
