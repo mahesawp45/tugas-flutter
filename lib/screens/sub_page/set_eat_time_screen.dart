@@ -306,8 +306,11 @@ class SetEatTimeScreen extends StatelessWidget {
                   if (alarmProvider.alarms.isNotEmpty) {
                     alarm = alarmProvider.alarms.firstWhere(
                       (element) =>
-                          element.alarmDateTime!.hour >= DateTime.now().hour &&
-                          element.alarmDateTime!.minute > DateTime.now().minute,
+                          element.alarmDateTime!.hour >= DateTime.now().hour ||
+                          element.alarmDateTime!.minute >=
+                              DateTime.now().minute ||
+                          element.alarmDateTime!.second >=
+                              DateTime.now().second,
                     );
 
                     gradientColor = GradientTemplate
