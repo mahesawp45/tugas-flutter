@@ -1,6 +1,3 @@
-import 'dart:developer';
-import 'dart:io';
-
 import 'package:bmi_app/database/alarm_hive.dart';
 import 'package:bmi_app/providers/alarm_provider.dart';
 import 'package:bmi_app/providers/bmi_calculator_provider.dart';
@@ -11,7 +8,6 @@ import 'package:bmi_app/screens/loading_screen.dart';
 import 'package:bmi_app/screens/splash_screen.dart';
 import 'package:bmi_app/styles/theme_styles.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -33,13 +29,8 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  Directory appDocDir = await getApplicationDocumentsDirectory();
-  String appDocPath = appDocDir.path;
-
-  log(appDocPath);
-
   // INIT HIVE
-  await Hive.initFlutter(appDocPath);
+  await Hive.initFlutter();
 
   // REGISTER si ADAPTER
   Hive.registerAdapter(AlarmHiveAdapter());
