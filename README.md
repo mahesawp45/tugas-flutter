@@ -15,3 +15,4 @@ A Simple BMI CALCULATOR Apps Portfolio with Flutter.
 ## Third Libraries
 - Hive
 - Provider
+- flutter_local_notifications
