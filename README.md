@@ -10,6 +10,7 @@ A Simple BMI CALCULATOR Apps Portfolio with Flutter.
     <img alt="Clock" title="Clock" width="200px" src="assets/4.jpg" />
     <img alt="Alarm" title="Alarm" width="200px" src="assets/5.jpg" />
     <img alt="Detail" title="Detail" width="200px" src="assets/6.jpg" />
+    <img alt="Detail" title="Detail" width="200px" src="assets/7.jpg" />
 </div>
 
 ## Third Libraries
